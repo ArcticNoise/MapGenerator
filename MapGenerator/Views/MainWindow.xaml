@@ -6,6 +6,8 @@
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
         xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
         xmlns:converters="clr-namespace:MapGenerator.Converters"
+        xmlns:selectors="clr-namespace:MapGenerator.Selectors"
+        xmlns:generators="clr-namespace:MapGenerator.Views.Generators"
         mc:Ignorable="d"
         Title="Map Generator" 
         Height="450" 
@@ -17,10 +19,14 @@
         viewModels:ViewModelLocator.AutoWireViewModel="True">
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <selectors:DataTypeTemplateSelector x:Key="GeneratorTemplateSelector">
+                <selectors:DataTypeTemplateSelector.Templates>
+                    <DataTemplate DataType="{x:Type viewModels:DiamondSquareGeneratorViewModel}">
+                        <generators:DiamondSquareGeneratorView/>
+                    </DataTemplate>
+                </selectors:DataTypeTemplateSelector.Templates>
+            </selectors:DataTypeTemplateSelector>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -102,62 +108,8 @@
                     </StackPanel>
                 </Border>
 
-                <Border x:Name="PowerGenerationSection" 
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5"
-                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <Label x:Name="CurrentPowerLabel"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="Current generation value: "/>
-                            <Label x:Name="CurrentPowerValue"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="{Binding PowerOfTwo}"
-                                   Margin="5"/>
-                            <Label x:Name="ExpectedSize"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="{Binding ExpectedImageSizeString}"
-                                   Margin="5"/>
-                        </StackPanel>
-                        
-                        <Slider Orientation="Horizontal"
-                                TickFrequency="1"
-                                Minimum="{Binding MinPowerValue}"
-                                Maximum="{Binding MaxPowerValue}"
-                                Value="{Binding PowerOfTwo}"
-                                TickPlacement="BottomRight"
-                                IsSelectionRangeEnabled="True"
-                                Margin="5"/>
-                    </StackPanel>
-                </Border>
-                <Border x:Name="RoughnessSection" 
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5"
-                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
-                    <StackPanel Orientation="Vertical">
-                        <Label x:Name="RoughnessDescription"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Content="Noise Roughness"
-                               Margin="5"/>
-                        <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
-                                                            Style="{StaticResource NumericUpDownStyle}"
-                                                            Margin="5"
-                                                            Value="{Binding Roughness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                            Background="LightGray"
-                                                            Foreground="Black"
-                                                            HorizontalContentAlignment="Center"
-                                                            VerticalContentAlignment="Center"
-                                                            Minimum="1"
-                                                            Maximum="100"/>
-                    </StackPanel>
-                </Border>
+                <ContentControl Content="{Binding Generator}"
+                                ContentTemplateSelector="{StaticResource GeneratorTemplateSelector}"/>
                 
             </StackPanel>
         </Border>

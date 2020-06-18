@@ -14,6 +14,5 @@ namespace MapGenerator.Extensions
                 encoder.Save(fileStream);
             }
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MapGenerator.Noise
+namespace MapGenerator.Generators
 {
     public class DiamondSquareGenerator
     {
