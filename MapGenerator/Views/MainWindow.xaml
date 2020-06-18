@@ -18,7 +18,12 @@
         viewModels:ViewModelLocator.AutoWireViewModel="True">
     <Window.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/MapGenerator;component/Styles/Images.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+
             <selectors:DataTypeTemplateSelector x:Key="GeneratorTemplateSelector">
                 <selectors:DataTypeTemplateSelector.Templates>
                     <DataTemplate DataType="{x:Type viewModels:DiamondSquareGeneratorViewModel}">
@@ -28,6 +33,14 @@
             </selectors:DataTypeTemplateSelector>
         </ResourceDictionary>
     </Window.Resources>
+
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="Icon" 
+                    Value="{StaticResource AppIcon}"/>
+        </Style>
+    </Window.Style>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.6*"/>
