@@ -113,7 +113,7 @@
                             <Label Content="Map Width:  "
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
-                            <Label Content="{Binding MapSideSize}"
+                            <Label Content="{Binding Width}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
                         </StackPanel>
@@ -121,7 +121,7 @@
                             <Label Content="Map Height: "
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
-                            <Label Content="{Binding MapSideSize}"
+                            <Label Content="{Binding Height}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"/>
                         </StackPanel>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,11 +30,18 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_IsGenerating, value);
         }
 
-        private int m_MapSideSize;
-        public int MapSideSize
+        private int m_Width;
+        public int Width
         {
-            get => m_MapSideSize;
-            set => SetProperty(ref m_MapSideSize, value);
+            get => m_Width;
+            set => SetProperty(ref m_Width, value);
+        }
+
+        private int m_Height;
+        public int Height
+        {
+            get => m_Height;
+            set => SetProperty(ref m_Height, value);
         }
 
         private BitmapImage m_Image;
@@ -67,9 +72,10 @@ namespace MapGenerator.ViewModels
 
             try
             {
-                m_Map = m_Generator.GenerateMap(token);
+                m_Map = Generator.GenerateMap(token);
                 Image = ImageGenerator.GenerateGreyscale(m_Map, token);
-                MapSideSize = m_Map.GetLength(0);
+                Width = m_Map.GetLength(0);
+                Height = m_Map.GetLength(1);
             }
             catch(OperationCanceledException)
             {
@@ -106,7 +112,8 @@ namespace MapGenerator.ViewModels
         
         private void ResetValues()
         {
-            MapSideSize = 0;
+            Width = 0;
+            Height = 0;
             m_Map = null;
             Image = null;
         }

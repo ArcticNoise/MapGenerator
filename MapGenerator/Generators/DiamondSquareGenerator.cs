@@ -7,7 +7,7 @@ namespace MapGenerator.Generators
     {
         private int m_Size;
         private float[,] m_Map;
-        private Random m_Random;
+        private readonly Random m_Random;
         private float m_Roughness;
 
         private readonly int m_Seed;
@@ -15,12 +15,13 @@ namespace MapGenerator.Generators
         private float m_MinValue;
         private float m_MaxValue;
 
+        private const int MinValueOfTwo = 2;
         private const int MaxPowerOfTwo = 14;
 
         public DiamondSquareGenerator(int randomSeed)
         {
             m_Seed = randomSeed;
-            ResetRandom();
+            m_Random = new Random(m_Seed);
         }
         
         public float[,] GenerateMap(int n, float minValue = 0, float maxValue = 1, float roughness = 2, CancellationToken token = new CancellationToken())
@@ -28,6 +29,11 @@ namespace MapGenerator.Generators
             if (n > MaxPowerOfTwo)
             {
                 throw new ArgumentException($"n should not be more then {MaxPowerOfTwo} or it can cause an overflow.");
+            }
+
+            if (n < MinValueOfTwo)
+            {
+                throw new ArgumentException($"n should not be less then {MinValueOfTwo}.");
             }
 
             m_Size = (int)Math.Pow(2, n) + 1;
@@ -42,12 +48,7 @@ namespace MapGenerator.Generators
 
             return m_Map;
         }
-
-        public void ResetRandom()
-        {
-            m_Random = new Random(m_Seed);
-        }
-
+        
         private void GenerateMapInternal(CancellationToken token)
         {
             m_Map = new float[m_Size, m_Size];
