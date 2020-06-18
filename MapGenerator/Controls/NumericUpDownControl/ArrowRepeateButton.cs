@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls.Primitives;
-using MapGenerator.Converters;
-using MapGenerator.Enums;
+using MapGenerator.Controls.NumericUpDownControl.Converters;
+using MapGenerator.Controls.NumericUpDownControl.Enums;
 
-namespace MapGenerator.Controls
+namespace MapGenerator.Controls.NumericUpDownControl
 {
     public class ArrowRepeatButton : RepeatButton
     {

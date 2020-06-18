@@ -2,8 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MapGenerator.Controls"
                     xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic"
-                    xmlns:helpers="clr-namespace:MapGenerator.Helpers">
-    <Style x:Key="NumericUpDownStyle" TargetType="{x:Type local:NumericUpDown}">
+                    xmlns:helpers="clr-namespace:MapGenerator.Controls.NumericUpDownControl.Helpers"
+                    xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl">
+    <Style x:Key="NumericUpDownStyle" TargetType="{x:Type numericUpDownControl:NumericUpDown}">
         <Setter Property = "TextAlignment" 
                 Value="Left"/>
         <Setter Property = "Height" Value="36"/>
@@ -16,7 +17,7 @@
     </Style>
 
     <helpers:ThicknessToMarginConverter x:Key="ThicknessToMarginConverter" />
-    <Style TargetType="{x:Type local:ArrowRepeatButton}">
+    <Style TargetType="{x:Type numericUpDownControl:ArrowRepeatButton}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
@@ -27,7 +28,7 @@
         <Setter Property="Padding" Value="0,0,0,0"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:ArrowRepeatButton}">
+                <ControlTemplate TargetType="{x:Type numericUpDownControl:ArrowRepeatButton}">
                     <Grid Name="ButtonGrid" Margin="0,0,0,0">
                         <themes:ClassicBorderDecorator
                                   Name="ClassicBorder"
@@ -66,7 +67,7 @@
         </Setter>
     </Style>
     <!-- Other theme specific values here (that is, that are not used by RepeatArrowBotton) -->
-    <Style x:Key="UpDownButtonsStyle" TargetType="{x:Type local:UpDownButtons}">
+    <Style x:Key="UpDownButtonsStyle" TargetType="{x:Type numericUpDownControl:UpDownButtons}">
         <Setter Property="Margin" Value="{Binding BorderThickness, ElementName=TextBoxCtrl}"/>
     </Style>
     <Style x:Key="TimeCtrlsGridStyle" TargetType="{x:Type Grid}">

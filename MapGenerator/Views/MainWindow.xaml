@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:MapGenerator"
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
         xmlns:controls="clr-namespace:MapGenerator.Controls"
+        xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
         mc:Ignorable="d"
         Title="NoiseMapGenerator" 
         Height="450" 
@@ -130,7 +131,7 @@
                         BorderThickness="2"
                         BorderBrush="Black"
                         Margin="5">
-                    <controls:NumericUpDown x:Name="RoughnessUpDown"
+                    <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
                                             Style="{StaticResource NumericUpDownStyle}"
                                             Margin="5"
                                             Value="{Binding Roughness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace MapGenerator.Helpers
+namespace MapGenerator.Controls.NumericUpDownControl.Helpers
 {
     public enum DecimalSeparatorType : int
     {

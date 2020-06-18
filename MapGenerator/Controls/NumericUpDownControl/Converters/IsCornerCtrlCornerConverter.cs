@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 
-namespace MapGenerator.Converters
+namespace MapGenerator.Controls.NumericUpDownControl.Converters
 {
     public class IsCornerCtrlCornerConverter : TypeConverter
     {

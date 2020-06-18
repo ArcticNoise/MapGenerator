@@ -1,9 +1,10 @@
-﻿<UserControl x:Class="MapGenerator.Controls.UpDownButtons"
+﻿<UserControl x:Class="MapGenerator.Controls.NumericUpDownControl.UpDownButtons"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MapGenerator.Controls"
+             xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -11,12 +12,12 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <local:ArrowRepeatButton x:Name="UpButton" 
+        <numericUpDownControl:ArrowRepeatButton x:Name="UpButton" 
                                  Grid.Row="0" 
                                  Click="UpButton_Click" 
                                  ButtonArrowType="Up" 
                                  IsCornerCtrlCorner="False,True,False,False"/>
-        <local:ArrowRepeatButton x:Name="DownButton" 
+        <numericUpDownControl:ArrowRepeatButton x:Name="DownButton" 
                                  Grid.Row="1" 
                                  Click="DownButton_Click"
                                  ButtonArrowType="Down" 

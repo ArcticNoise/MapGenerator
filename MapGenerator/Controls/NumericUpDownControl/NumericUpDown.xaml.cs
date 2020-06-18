@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Linq;
-using MapGenerator.Helpers;
+using MapGenerator.Controls.NumericUpDownControl.Helpers;
 
-namespace MapGenerator.Controls
+namespace MapGenerator.Controls.NumericUpDownControl
 {
     /// <summary>
     /// Interaction logic for NumericUpDown.xaml

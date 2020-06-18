@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace MapGenerator.Converters
+namespace MapGenerator.Controls.NumericUpDownControl.Converters
 {
     /// <summary>
     /// IsCornerCtrlCorner is used to indicate which corners of the arrow button are also on the corner of the container control

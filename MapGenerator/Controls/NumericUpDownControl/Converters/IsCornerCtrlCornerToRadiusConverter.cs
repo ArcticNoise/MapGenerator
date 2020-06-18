@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace MapGenerator.Converters
+namespace MapGenerator.Controls.NumericUpDownControl.Converters
 {
     [ValueConversion(typeof(IsCornerCtrlCorner), typeof(CornerRadius))]
     public class IsCornerCtrlCornerToRadiusConverter : IValueConverter

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace MapGenerator.Controls
+namespace MapGenerator.Controls.NumericUpDownControl
 {
     /// <summary>
     /// Interaction logic for UpDownButtons.xaml

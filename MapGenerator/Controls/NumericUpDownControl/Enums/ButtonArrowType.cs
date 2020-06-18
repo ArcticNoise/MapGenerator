@@ -1,4 +1,4 @@
-﻿namespace MapGenerator.Enums
+﻿namespace MapGenerator.Controls.NumericUpDownControl.Enums
 {
     public enum EButtonArrowType
     {
