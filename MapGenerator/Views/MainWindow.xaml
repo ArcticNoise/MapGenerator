@@ -47,7 +47,7 @@
                         Margin="5"
                         BorderThickness="2"
                         BorderBrush="Black"
-                        Command="{Binding GenerateMapCommand}"/>
+                        Command="{Binding GenerateMapAsyncCommand}"/>
                 <Button x:Name="SaveButton"
                         Content="Save"
                         Width="60"
@@ -147,7 +147,7 @@
 
     </Grid>
     <Window.InputBindings>
-        <KeyBinding Command="{Binding GenerateMapCommand}"
+        <KeyBinding Command="{Binding GenerateMapAsyncCommand}"
                     Key="F5"/>
         <KeyBinding Command="{Binding SaveMapCommand}"
                     Key="S"

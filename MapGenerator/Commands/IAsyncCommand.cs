@@ -5,13 +5,19 @@ namespace MapGenerator.Commands
 {
     public interface IAsyncCommand : ICommand
     {
-        Task ExecuteAsync();
-        bool CanExecute();
+        Task ExecuteAsync(object parameter);
     }
 
-    public interface IAsyncCommand<T> : ICommand
-    {
-        Task ExecuteAsync(T parameter);
-        bool CanExecute(T parameter);
-    }
+    //public interface IAsyncCommand : ICommand
+    //{
+    //    Task ExecuteAsync();
+    //    bool CanExecute();
+    //}
+
+
+    //public interface IAsyncCommand<T> : ICommand
+    //{
+    //    Task ExecuteAsync(T parameter);
+    //    bool CanExecute(T parameter);
+    //}
 }

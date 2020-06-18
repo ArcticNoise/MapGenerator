@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -52,6 +53,13 @@ namespace MapGenerator.ViewModels
             }
         }
 
+        private bool m_IsGenerating;
+        public bool IsGenerating
+        {
+            get => m_IsGenerating;
+            set => SetProperty(ref m_IsGenerating, value);
+        }
+
         private BitmapImage m_Image;
         public BitmapImage Image
         {
@@ -59,27 +67,43 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_Image, value);
         }
 
-        public ICommand GenerateMapCommand => new DelegateCommand(obj => GenerateMap());
-        public ICommand SaveMapCommand => new DelegateCommand(obj => SaveMap(), obj => m_Image != null);
+        public IAsyncCommand GenerateMapAsyncCommand => AsyncCommand.Create(GenerateMapAsync);
+
+        public ICommand SaveMapCommand => new DelegateCommand(obj => SaveMap(), obj => m_Image != null && !m_IsGenerating);
         
         public MainWindowViewModel()
         {
             m_Generator = new DiamondSquareGenerator(Seed);
         }
 
+        private async Task GenerateMapAsync()
+        {
+            await Task.Run(GenerateMap);
+        }
+
         private void GenerateMap()
         {
-            m_Map = m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness);
-            GenerateBitmap();
+            try
+            {
+                ResetValues();
+                IsGenerating = true;
+
+                m_Map = m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness);
+                GenerateBitmap();
+            }
+            finally
+            {
+                IsGenerating = false;
+            }
         }
-        
+
         private void GenerateBitmap()
         {
-            MapSideSize = m_Map.GetLength(0);
-            var bitmap = new Bitmap(MapSideSize, MapSideSize);
-            for (var x = 0; x < m_Map.GetLength(0); x++)
+            var size = m_Map.GetLength(0);
+            var bitmap = new Bitmap(size, size);
+            for (var x = 0; x < size; x++)
             {
-                for (var y = 0; y < m_Map.GetLength(1); y++)
+                for (var y = 0; y < size; y++)
                 {
                     var height = m_Map[x, y];
                     var pixelColorValue = (int)height;
@@ -88,6 +112,7 @@ namespace MapGenerator.ViewModels
                 }
             }
 
+            MapSideSize = size;
             Image = BitmapToImageSource(bitmap);
         }
 
@@ -114,6 +139,12 @@ namespace MapGenerator.ViewModels
             }
         }
 
+        private void ResetValues()
+        {
+            MapSideSize = 0;
+            Image = null;
+        }
+
         private static BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
             using (var memory = new MemoryStream())
@@ -127,6 +158,8 @@ namespace MapGenerator.ViewModels
                 bImage.CacheOption = BitmapCacheOption.OnLoad;
                 bImage.EndInit();
 
+                bImage.Freeze();
+                
                 return bImage;
             }
         }
