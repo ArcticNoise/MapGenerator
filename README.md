@@ -1,5 +1,5 @@
 # Map Generator
-Simple Map generation tool made with C# and WPF (MVVM).
+Simple Map generation tool made with C#, .Net Core and WPF (MVVM).
 
 v0.1
 
