@@ -22,28 +22,35 @@ namespace MapGenerator.Controls.NumericUpDownControl.Converters
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value == null)
+            {
                 throw new System.ArgumentNullException();
+            }
 
             if (!(value is IsCornerCtrlCorner))
+            {
                 throw new System.ArgumentException();
+            }
 
-            string str = (string)parameter;
-            IsCornerCtrlCorner ccc = (IsCornerCtrlCorner)value;
-            int rounding;
+            var str = (string)parameter;
+            var ccc = (IsCornerCtrlCorner)value;
 
-            if (!int.TryParse(str, out rounding))
+            if (!int.TryParse(str, out var rounding))
             {
                 if (!(str[0] == '0' && (str[1] == 'x' || str[1] == 'X')))
+                {
                     throw new System.ArgumentException();
+                }
 
-                if (!Int32.TryParse(str.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out rounding))
+                if (!int.TryParse(str.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out rounding))
+                {
                     throw new System.ArgumentException();
+                }
             }
-            int NotEdgeRounding = rounding >> 8;
-            int EdgeRounding = rounding & 0x000000FF;
+            int notEdgeRounding = rounding >> 8;
+            int edgeRounding = rounding & 0x000000FF;
 
-            return new CornerRadius(ccc.TopLeft ? EdgeRounding : NotEdgeRounding, ccc.TopRight ? EdgeRounding : NotEdgeRounding,
-                                    ccc.BottomRight ? EdgeRounding : NotEdgeRounding, ccc.BottomLeft ? EdgeRounding : NotEdgeRounding);
+            return new CornerRadius(ccc.TopLeft ? edgeRounding : notEdgeRounding, ccc.TopRight ? edgeRounding : notEdgeRounding,
+                                    ccc.BottomRight ? edgeRounding : notEdgeRounding, ccc.BottomLeft ? edgeRounding : notEdgeRounding);
         }
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

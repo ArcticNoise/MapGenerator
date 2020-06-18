@@ -25,6 +25,7 @@ namespace MapGenerator.Controls.NumericUpDownControl
             add => AddHandler(DownClickEvent, value);
             remove => RemoveHandler(DownClickEvent, value);
         }
+
         public UpDownButtons()
         {
             InitializeComponent();
@@ -32,14 +33,14 @@ namespace MapGenerator.Controls.NumericUpDownControl
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
         {
-            RoutedEventArgs UpClickEventArgs = new RoutedEventArgs(UpClickEvent);
-            RaiseEvent(UpClickEventArgs);
+            var upClickEventArgs = new RoutedEventArgs(UpClickEvent);
+            RaiseEvent(upClickEventArgs);
         }
 
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
-            RoutedEventArgs DownClickEventArgs = new RoutedEventArgs(DownClickEvent);
-            RaiseEvent(DownClickEventArgs);
+            var downClickEventArgs = new RoutedEventArgs(DownClickEvent);
+            RaiseEvent(downClickEventArgs);
         }
     }
 }

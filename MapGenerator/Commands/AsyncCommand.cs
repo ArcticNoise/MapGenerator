@@ -5,8 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+
 namespace MapGenerator.Commands
 {
+    //Source:
+    //https://docs.microsoft.com/en-us/archive/msdn-magazine/2014/april/async-programming-patterns-for-asynchronous-mvvm-applications-commands
+    //
     public abstract class AsyncCommandBase : IAsyncCommand
     {
         public abstract bool CanExecute(object parameter);

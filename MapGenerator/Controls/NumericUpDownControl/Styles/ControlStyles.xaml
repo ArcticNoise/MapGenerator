@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:MapGenerator.Controls"
                     xmlns:themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Classic"
                     xmlns:helpers="clr-namespace:MapGenerator.Controls.NumericUpDownControl.Helpers"
                     xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl">
+
     <Style x:Key="NumericUpDownStyle" TargetType="{x:Type numericUpDownControl:NumericUpDown}">
         <Setter Property = "TextAlignment" 
                 Value="Left"/>
@@ -69,11 +69,5 @@
     <!-- Other theme specific values here (that is, that are not used by RepeatArrowBotton) -->
     <Style x:Key="UpDownButtonsStyle" TargetType="{x:Type numericUpDownControl:UpDownButtons}">
         <Setter Property="Margin" Value="{Binding BorderThickness, ElementName=TextBoxCtrl}"/>
-    </Style>
-    <Style x:Key="TimeCtrlsGridStyle" TargetType="{x:Type Grid}">
-        <Setter Property="Margin" Value="{Binding ElementName=TextBoxCtrl, 
-                                Path=BorderThickness,
-                                Converter={StaticResource ThicknessToMarginConverter},
-                                ConverterParameter=true}"/>
     </Style>
 </ResourceDictionary>

@@ -9,9 +9,10 @@ using MapGenerator.Controls.NumericUpDownControl.Helpers;
 
 namespace MapGenerator.Controls.NumericUpDownControl
 {
-    /// <summary>
-    /// Interaction logic for NumericUpDown.xaml
-    /// </summary>
+    //Source:
+    //https://www.codeproject.com/Articles/267601/Csharp-WPF-NET-ArrowRepeatButton-NumericUpDown
+    //
+
     public partial class NumericUpDown : UserControl, IFrameTxtBoxCtrl
     {
         static NumericUpDown()
@@ -35,13 +36,13 @@ namespace MapGenerator.Controls.NumericUpDownControl
             DependencyProperty.Register("DecimalPlaces", typeof(int), typeof(NumericUpDown), new PropertyMetadata(0));
 
         private static readonly DependencyProperty DecimalSeparatorTypeProperty =
-            DependencyProperty.Register("DecimalSeparatorType", typeof(DecimalSeparatorType), typeof(NumericUpDown), new PropertyMetadata(DecimalSeparatorType.System_Defined));
+            DependencyProperty.Register("DecimalSeparatorType", typeof(DecimalSeparatorType), typeof(NumericUpDown), new PropertyMetadata(DecimalSeparatorType.SystemDefined));
 
         private static readonly DependencyProperty NegativeSignTypeProperty =
-            DependencyProperty.Register("NegativeSignType", typeof(NegativeSignType), typeof(NumericUpDown), new PropertyMetadata(NegativeSignType.System_Defined));
+            DependencyProperty.Register("NegativeSignType", typeof(NegativeSignType), typeof(NumericUpDown), new PropertyMetadata(NegativeSignType.SystemDefined));
 
         private static readonly DependencyProperty NegativeSignSideProperty =
-            DependencyProperty.Register("NegativeSignSide", typeof(NegativeSignSide), typeof(NumericUpDown), new PropertyMetadata(NegativeSignSide.System_Defined));
+            DependencyProperty.Register("NegativeSignSide", typeof(NegativeSignSide), typeof(NumericUpDown), new PropertyMetadata(NegativeSignSide.SystemDefined));
 
         private static readonly DependencyProperty NegativeTextBrushProperty =
             DependencyProperty.Register("NegativeTextBrush", typeof(Brush), typeof(NumericUpDown));
@@ -55,23 +56,27 @@ namespace MapGenerator.Controls.NumericUpDownControl
         private static void ValueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is NumericUpDown numUpDown && e.NewValue is decimal value)
+            {
                 numUpDown.FormatTextBox(value);
+            }
         }
 
         private static void TextAlignmentChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is NumericUpDown numUpDown && e.NewValue is TextAlignment value)
+            {
                 numUpDown.TextBoxCtrl.TextAlignment = value;
+            }
         }
 
-        struct TempCutCopyInfo
+        private struct TempCutCopyInfo
         {
             public int m_Pos;
             public decimal m_Value;
             public string m_CutStr;
         }
 
-        private TempCutCopyInfo m_TempCCInf;
+        private TempCutCopyInfo m_TempCcInf;
 
         public NumericUpDown()
         {
@@ -250,21 +255,28 @@ namespace MapGenerator.Controls.NumericUpDownControl
         {
             e.Handled = false;
 
-            if (e.Key == Key.Space) // Want to prevent entering spaces. Amazingly, TextBoxCtrl_PreviewTextInput not called, even though
-                                    // TextBoxCtrl_PreviewTextInput IS called when enter return key (and e.Text = '\r') ??!!!  
+            // Want to prevent entering spaces. Amazingly, TextBoxCtrl_PreviewTextInput not called, even though
+            // TextBoxCtrl_PreviewTextInput IS called when enter return key (and e.Text = '\r') ??!!!  
+            if (e.Key == Key.Space) 
+            {
                 e.Handled = true;
+            }
             else if (e.Key == Key.Left)
             {
                 // Prevent overlapping over an existing negative sign.
-                if (IsNegativePrefix() && TextBoxCtrl.Text != null && TextBoxCtrl.Text.Length > 0
+                if (IsNegativePrefix() && !string.IsNullOrEmpty(TextBoxCtrl.Text)
                                        && TextBoxCtrl.Text[0] == GetNegativeSign()[0])
+                {
                     e.Handled = (TextBoxCtrl.SelectionStart <= 1);
+                }
             }
             else if (e.Key == Key.Right)
             {
-                if (!IsNegativePrefix() && TextBoxCtrl.Text != null && TextBoxCtrl.Text.Length > 0
-                       && TextBoxCtrl.Text[TextBoxCtrl.Text.Length - 1] == GetNegativeSign()[0])
+                if (!IsNegativePrefix() && TextBoxCtrl.Text.Length > 0
+                                        && TextBoxCtrl.Text[TextBoxCtrl.Text.Length - 1] == GetNegativeSign()[0])
+                {
                     e.Handled = (TextBoxCtrl.SelectionStart == TextBoxCtrl.Text.Length - 1);
+                }
             }
             else if (e.Key == Key.Up)
             {
@@ -278,8 +290,8 @@ namespace MapGenerator.Controls.NumericUpDownControl
             }
             else if (e.Key == Key.Home || e.Key == Key.PageUp)
             {
-                if (IsNegativePrefix() && TextBoxCtrl.Text != null && TextBoxCtrl.Text.Length > 0
-                                                        && TextBoxCtrl.Text[0] == GetNegativeSign()[0])
+                if (IsNegativePrefix() && TextBoxCtrl.Text.Length > 0
+                                       && TextBoxCtrl.Text[0] == GetNegativeSign()[0])
                 {
                     TextBoxCtrl.SelectionStart = 1;
                     TextBoxCtrl.SelectionLength = 0;
@@ -288,7 +300,7 @@ namespace MapGenerator.Controls.NumericUpDownControl
             }
             else if (e.Key == Key.End || e.Key == Key.PageDown)
             {
-                if (!IsNegativePrefix() && TextBoxCtrl.Text != null && TextBoxCtrl.Text.Length > 0
+                if (!IsNegativePrefix() && TextBoxCtrl.Text.Length > 0
                                         && TextBoxCtrl.Text[TextBoxCtrl.Text.Length - 1] == GetNegativeSign()[0])
                 {
                     TextBoxCtrl.SelectionStart = TextBoxCtrl.Text.Length - 1;
@@ -298,31 +310,43 @@ namespace MapGenerator.Controls.NumericUpDownControl
             }
             else if (e.Key == Key.Delete || e.Key == Key.Back)
             {
-                int CurPos = TextBoxCtrl.SelectionStart;
-                string Txt = TextBoxCtrl.Text;
-                bool UpdateTxt = true;
+                var curPos = TextBoxCtrl.SelectionStart;
+                var txt = TextBoxCtrl.Text;
+                var updateTxt = true;
 
                 if (TextBoxCtrl.SelectionLength > 0)
-                    Txt = Txt.Remove(CurPos, TextBoxCtrl.SelectionLength);
+                {
+                    txt = txt.Remove(curPos, TextBoxCtrl.SelectionLength);
+                }
                 else if (e.Key == Key.Delete)
                 {
-                    if (CurPos < Txt.Length)
-                        Txt = Txt.Remove(CurPos, 1);
+                    if (curPos < txt.Length)
+                    {
+                        txt = txt.Remove(curPos, 1);
+                    }
                     else
-                        UpdateTxt = false;
+                    {
+                        updateTxt = false;
+                    }
                 }
-                else if (CurPos > 0)
-                    Txt = Txt.Remove(--CurPos, 1);
+                else if (curPos > 0)
+                {
+                    txt = txt.Remove(--curPos, 1);
+                }
                 else
-                    UpdateTxt = false;
+                {
+                    updateTxt = false;
+                }
 
-                decimal CurrentValue;
-                if (UpdateTxt && ValidateInput(ref Txt, out CurrentValue, false))
-                    UpdateTextBoxTxt(Txt, CurPos, ref CurrentValue);
+                if (updateTxt && ValidateInput(ref txt, out var currentValue, false))
+                {
+                    UpdateTextBoxTxt(txt, curPos, ref currentValue);
+                }
 
                 e.Handled = true;
             }
         }
+
         public string GetDecimalSeparator()
         {
             switch (DecimalSeparatorType)
@@ -331,22 +355,22 @@ namespace MapGenerator.Controls.NumericUpDownControl
                     return ".";
                 case DecimalSeparatorType.Comma:
                     return ",";
-                case DecimalSeparatorType.System_Defined:
                 default:
                     return SystemNumberInfo.DecimalSeparator;
             }
         }
+
         public string GetNegativeSign()
         {
             switch (NegativeSignType)
             {
                 case NegativeSignType.Minus:
                     return "-";
-                case NegativeSignType.System_Defined:
                 default:
                     return SystemNumberInfo.NegativeSign;
             }
         }
+
         public bool IsNegativePrefix()
         {
             switch (NegativeSignSide)
@@ -355,277 +379,333 @@ namespace MapGenerator.Controls.NumericUpDownControl
                     return true;
                 case NegativeSignSide.Suffix:
                     return false;
-                case NegativeSignSide.System_Defined:
                 default:
                     return SystemNumberInfo.IsNegativePrefix;
             }
         }
-        IFormatProvider GetNumberFormat()
+
+        private IFormatProvider GetNumberFormat()
         {
-            CultureInfo info = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            NumberFormatInfo nfi = info.NumberFormat;
+            var info = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+            var nfi = info.NumberFormat;
             nfi.NumberDecimalSeparator = GetDecimalSeparator();
             nfi.NumberDecimalDigits = (DecimalPlaces >= 0) ? DecimalPlaces : 0; // Only works for output, not input as we require here...
             nfi.NegativeSign = GetNegativeSign();
             nfi.CurrencyDecimalDigits = (DecimalPlaces >= 0) ? DecimalPlaces : 0;
-            nfi.NumberGroupSeparator = "";
+            nfi.NumberGroupSeparator = string.Empty;
 
             if (IsNegativePrefix() && nfi.NumberNegativePattern >= 3)
+            {
                 nfi.NumberNegativePattern = 1;
+            }
 
             if (!IsNegativePrefix() && nfi.NumberNegativePattern < 3)
+            {
                 nfi.NumberNegativePattern = 3;
+            }
 
             return info;
         }
-        private bool GetCurrentValue(string Txt, out decimal CurrentValue)
+
+        private bool GetCurrentValue(string txt, out decimal currentValue)
         {
             // We need a bit of an extension. We require value such as "", "-", "." or "12." to be valid 
             // (with negative sign set to '-', and decimal separator set to '.' of course)
-            if (Txt != null)
+            if (txt != null)
             {
                 // if decimal places > 0 and only one decimal separator typed and it is after all digits... 
                 // this makes an entry such as 12. valid.
-                if (DecimalPlaces > 0 && Txt.Count(chr => chr == GetDecimalSeparator()[0]) == 1
-                  && ((Txt.Length > 0 && Txt[Txt.Length - 1] == GetDecimalSeparator()[0])
-                 || (Txt.Length > 1 && Txt[Txt.Length - 1] == GetNegativeSign()[0] && Txt[Txt.Length - 2] == GetDecimalSeparator()[0])))
-                    Txt = Txt.Replace(GetDecimalSeparator(), "");
+                if (DecimalPlaces > 0 && txt.Count(chr => chr == GetDecimalSeparator()[0]) == 1
+                  && ((txt.Length > 0 && txt[txt.Length - 1] == GetDecimalSeparator()[0])
+                 || (txt.Length > 1 && txt[txt.Length - 1] == GetNegativeSign()[0] && txt[txt.Length - 2] == GetDecimalSeparator()[0])))
+                    txt = txt.Replace(GetDecimalSeparator(), string.Empty);
 
-                if (Txt == "" || Txt == GetNegativeSign())
+                if (txt == string.Empty || txt == GetNegativeSign())
                 {
-                    CurrentValue = 0.0M;
+                    currentValue = 0.0M;
                     return true;
                 }
-                if (Txt.Length > 0)
-                    return decimal.TryParse(Txt, ((DecimalPlaces > 0) ? NumberStyles.AllowDecimalPoint : 0)
-                        | (IsNegativePrefix() ? NumberStyles.AllowLeadingSign : NumberStyles.AllowTrailingSign), GetNumberFormat(), out CurrentValue);
+                if (txt.Length > 0)
+                {
+                    return decimal.TryParse(txt, ((DecimalPlaces > 0) ? NumberStyles.AllowDecimalPoint : 0)
+                                              | (IsNegativePrefix() ? NumberStyles.AllowLeadingSign : NumberStyles.AllowTrailingSign), GetNumberFormat(), out currentValue);
+
+                }
             }
-            CurrentValue = 0.0M;
+            currentValue = 0.0M;
+
             return false;
         }
-        private bool ValidateInput(ref string Txt, out decimal CurrentValue, bool RangeCheck = true)
+
+        private bool ValidateInput(ref string txt, out decimal currentValue, bool rangeCheck = true)
         {
-            CurrentValue = 0.0m;
-            bool IsValid = false;
+            currentValue = 0.0m;
 
             if (DecimalPlaces > 0) // If Txt has more digits than decimal places, trim out excess digits, otherwise get funny results.
             {
-                int Idx, Length, NegSymbIdx;
-                Idx = Txt.IndexOf(GetDecimalSeparator());
+                var idx = txt.IndexOf(GetDecimalSeparator(), StringComparison.Ordinal);
 
-                if (Idx != -1)
+                if (idx != -1)
                 {
-                    NegSymbIdx = Txt.IndexOf(GetNegativeSign(), ++Idx);
-                    Length = (NegSymbIdx != -1) ? NegSymbIdx - Idx : Txt.Length - Idx;
+                    var negSymbIdx = txt.IndexOf(GetNegativeSign(), ++idx, StringComparison.Ordinal);
+                    var length = (negSymbIdx != -1) ? negSymbIdx - idx : txt.Length - idx;
 
-                    if (Length > DecimalPlaces)
-                        Txt = Txt.Remove(Idx + DecimalPlaces, Length - DecimalPlaces);
+                    if (length > DecimalPlaces)
+                    {
+                        txt = txt.Remove(idx + DecimalPlaces, length - DecimalPlaces);
+                    }
                 }
             }
-            IsValid = GetCurrentValue(Txt, out CurrentValue);
 
-            if (IsValid)
+            var isValid = GetCurrentValue(txt, out currentValue);
+
+            if (isValid)
             {
-                if (RangeCheck && (CurrentValue > Maximum || CurrentValue < Minimum))
-                    IsValid = false;
+                if (rangeCheck && (currentValue > Maximum || currentValue < Minimum))
+                {
+                    isValid = false;
+                }
             }
-            return IsValid;
+            return isValid;
         }
+
         private void TextBoxCtrl_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (e.Text.Length == 0)
+            {
                 return;
+            }
 
-            int CurPos = TextBoxCtrl.SelectionStart;
-            string Txt;
+            var curPos = TextBoxCtrl.SelectionStart;
+            string txt;
 
             if (e.Text == GetNegativeSign() && Minimum < 0)
             {
-                Txt = TextBoxCtrl.Text;
-                if (string.IsNullOrEmpty(Txt))
+                txt = TextBoxCtrl.Text;
+                if (string.IsNullOrEmpty(txt))
                 {
-                    Txt = GetNegativeSign();
+                    txt = GetNegativeSign();
 
                     if (IsNegativePrefix())
-                        CurPos++;
+                    {
+                        curPos++;
+                    }
                 }
                 else
                 {
                     if (IsNegativePrefix())
                     {
-                        if ((Txt[0] == GetNegativeSign()[0]))
+                        if ((txt[0] == GetNegativeSign()[0]))
                         {
-                            Txt = Txt.Remove(0, 1);
-                            if (CurPos > 0) CurPos--;
+                            txt = txt.Remove(0, 1);
+                            if (curPos > 0)
+                            {
+                                curPos--;
+                            }
                         }
                         else
                         {
-                            Txt = GetNegativeSign() + Txt;
-                            CurPos++;
+                            txt = GetNegativeSign() + txt;
+                            curPos++;
                         }
                     }
                     else
-                        Txt = (Txt[Txt.Length - 1] == GetNegativeSign()[0]) ? Txt.Remove(Txt.Length - 1, 1) : Txt + GetNegativeSign();
+                    {
+                        txt = (txt[txt.Length - 1] == GetNegativeSign()[0]) ? txt.Remove(txt.Length - 1, 1) : txt + GetNegativeSign();
+                    }
                 }
             }
             else if (e.Text != GetNegativeSign())
             {
-                Txt = TextBoxCtrl.Text.Remove(CurPos, TextBoxCtrl.SelectionLength);
+                txt = TextBoxCtrl.Text.Remove(curPos, TextBoxCtrl.SelectionLength);
 
-                if (Keyboard.GetKeyStates(Key.Insert) == KeyStates.Toggled && CurPos < Txt.Length)
-                    Txt = Txt.Remove(CurPos, 1);
+                if (Keyboard.GetKeyStates(Key.Insert) == KeyStates.Toggled && curPos < txt.Length)
+                {
+                    txt = txt.Remove(curPos, 1);
+                }
 
-                Txt = Txt.Insert(CurPos, e.Text);
-                CurPos++;
+                txt = txt.Insert(curPos, e.Text);
+                curPos++;
             }
             else
-                Txt = TextBoxCtrl.Text;
+            {
+                txt = TextBoxCtrl.Text;
+            }
 
-            if (ValidateInput(ref Txt, out var currentValue, false))
+            if (ValidateInput(ref txt, out var currentValue, false))
             {
                 // Remove any leading '0'. 
-                int LeadZeroIdx = 0, StartPos = 0;
+                int leadZeroIdx = 0, startPos = 0;
 
-                if (Txt.Length > 0 && Txt[StartPos] == GetNegativeSign()[0])
-                    LeadZeroIdx = StartPos = 1;
+                if (txt.Length > 0 && txt[startPos] == GetNegativeSign()[0])
+                {
+                    leadZeroIdx = startPos = 1;
+                }
 
-                while (LeadZeroIdx < Txt.Length && Txt[LeadZeroIdx] == '0')
-                    LeadZeroIdx++;
+                while (leadZeroIdx < txt.Length && txt[leadZeroIdx] == '0')
+                {
+                    leadZeroIdx++;
+                }
 
                 // Keep just 1 leading '0' unless 1st non zero is a digit.
-                if (LeadZeroIdx != StartPos && !(LeadZeroIdx < Txt.Length && char.IsDigit(Txt[LeadZeroIdx])))
-                    --LeadZeroIdx;
+                if (leadZeroIdx != startPos && !(leadZeroIdx < txt.Length && char.IsDigit(txt[leadZeroIdx])))
+                {
+                    --leadZeroIdx;
+                }
 
-                Txt = Txt.Remove(StartPos, LeadZeroIdx - StartPos);
+                txt = txt.Remove(startPos, leadZeroIdx - startPos);
 
-                if (e.Text == "0" && CurPos == StartPos + 1)
-                    CurPos = StartPos;
+                if (e.Text == "0" && curPos == startPos + 1)
+                {
+                    curPos = startPos;
+                }
 
                 // This is for case of a suffixed negative sign and decimal places > 0. If type a number at end of string, this
                 // is removed because it has moved beyond decimal places allowed. However, in this case do not want to move caret, 
                 // otherwise it moves over negative sign.   
-                if (e.Text != GetNegativeSign() && CurPos - 1 < Txt.Length && !IsNegativePrefix() &&
-                                                            Txt[CurPos - 1] == GetNegativeSign()[0] && CurPos > 0)
-                    CurPos--;
+                if (e.Text != GetNegativeSign() && curPos - 1 < txt.Length && !IsNegativePrefix() &&
+                    txt[curPos - 1] == GetNegativeSign()[0] && curPos > 0)
+                {
+                    curPos--;
+                }
 
-                UpdateTextBoxTxt(Txt, CurPos, ref currentValue);
+                UpdateTextBoxTxt(txt, curPos, ref currentValue);
             }
             e.Handled = true;
         }
+
         private void TextBoxCtrl_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta > 0)
+            {
                 OnUpIncr();
+            }
             else
+            {
                 OnDownIncr();
+            }
         }
+
         private void TextBoxCtrl_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             UpdateInput();
         }
+
         private void Root_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             TextBoxCtrl.Foreground = GetTextBrush(Value);
         }
-        private void InitTempInf(bool CanExecute, int SelStart, decimal CurrentValue, string CurrentSel)
+
+        private void InitTempInf(bool canExecute, int selStart, decimal currentValue, string currentSel)
         {
-            if (CanExecute)
+            if (canExecute)
             {
-                m_TempCCInf.m_Pos = SelStart;
-                m_TempCCInf.m_Value = CurrentValue;
-                m_TempCCInf.m_CutStr = CurrentSel;
+                m_TempCcInf.m_Pos = selStart;
+                m_TempCcInf.m_Value = currentValue;
+                m_TempCcInf.m_CutStr = currentSel;
             }
         }
+
         private void Command_Cut_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            decimal CurrentValue = 0.0M;
-            string NewTxt = TextBoxCtrl.Text.Remove(TextBoxCtrl.SelectionStart, TextBoxCtrl.SelectionLength);
+            var currentValue = 0.0M;
+            var newTxt = TextBoxCtrl.Text.Remove(TextBoxCtrl.SelectionStart, TextBoxCtrl.SelectionLength);
             e.CanExecute = TextBoxCtrl.SelectionLength > 0 &&
-               ValidateInput(ref NewTxt, out CurrentValue);
+               ValidateInput(ref newTxt, out currentValue);
 
-            InitTempInf(e.CanExecute, TextBoxCtrl.SelectionStart, CurrentValue,
+            InitTempInf(e.CanExecute, TextBoxCtrl.SelectionStart, currentValue,
                                             TextBoxCtrl.Text.Substring(TextBoxCtrl.SelectionStart, TextBoxCtrl.SelectionLength));
             e.Handled = true;
         }
+
         private void Command_Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            decimal CurrentValue = 0.0M;
-            string ClipTxt = (string)Clipboard.GetData("Text");
+            var clipTxt = (string)Clipboard.GetData("Text");
 
-            if (string.IsNullOrEmpty(ClipTxt))
+            if (string.IsNullOrEmpty(clipTxt))
+            {
                 e.CanExecute = false;
+            }
             else
             {
-                int CurPos = TextBoxCtrl.SelectionStart;
-                string Txt = TextBoxCtrl.Text.Remove(CurPos, TextBoxCtrl.SelectionLength);
-                Txt = Txt.Insert(CurPos, ClipTxt);
-                e.CanExecute = ValidateInput(ref Txt, out CurrentValue);
-                InitTempInf(e.CanExecute, TextBoxCtrl.SelectionStart, CurrentValue, "");
+                var curPos = TextBoxCtrl.SelectionStart;
+                var txt = TextBoxCtrl.Text.Remove(curPos, TextBoxCtrl.SelectionLength);
+                txt = txt.Insert(curPos, clipTxt);
+                e.CanExecute = ValidateInput(ref txt, out var currentValue);
+                InitTempInf(e.CanExecute, TextBoxCtrl.SelectionStart, currentValue, string.Empty);
             }
             e.Handled = true;
         }
+
         private void CommandBinding_CutExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            Value = m_TempCCInf.m_Value;
-            TextBoxCtrl.SelectionStart = m_TempCCInf.m_Pos;
-            Clipboard.SetData("Text", m_TempCCInf.m_CutStr);
+            Value = m_TempCcInf.m_Value;
+            TextBoxCtrl.SelectionStart = m_TempCcInf.m_Pos;
+            Clipboard.SetData("Text", m_TempCcInf.m_CutStr);
             e.Handled = true;
         }
+
         private void CommandBinding_PasteExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            Value = m_TempCCInf.m_Value;
-            TextBoxCtrl.SelectionStart = m_TempCCInf.m_Pos;
+            Value = m_TempCcInf.m_Value;
+            TextBoxCtrl.SelectionStart = m_TempCcInf.m_Pos;
         }
+
         private void TextBoxCtrl_PreviewDragOver(object sender, DragEventArgs e)
         {
-            if (sender is Control ctrl)
+            if (sender is Control)
             {
-                string DragTxt = (string)e.Data.GetData("Text");
-                Point pt = e.GetPosition(TextBoxCtrl);
-                Object obj = e.Source;
+                var dragTxt = (string)e.Data.GetData("Text");
+                var pt = e.GetPosition(TextBoxCtrl);
 
                 TextBoxCtrl.Focus();
 
-                int CharPosClosest = TextBoxCtrl.GetCharacterIndexFromPoint(pt, true); // With SnapToText = false, always get 1 returned 
+                var charPosClosest = TextBoxCtrl.GetCharacterIndexFromPoint(pt, true); // With SnapToText = false, always get 1 returned 
 
-                if (CharPosClosest == TextBoxCtrl.Text.Length - 1)
+                if (charPosClosest == TextBoxCtrl.Text.Length - 1)
                 {
                     // According to MSDN documentation, GetRectFromCharacterIndex always returns the zero-width rectangle preceeding 
                     // the character.
                     // Documentation says nothing about one past the last character. This I just guessed. Logically it should work,
                     // and you should be able to get this information, but documentation says nothing about this.
-                    Rect rc = TextBoxCtrl.GetRectFromCharacterIndex(CharPosClosest + 1);
+                    var rc = TextBoxCtrl.GetRectFromCharacterIndex(charPosClosest + 1);
 
                     if (rc.Right < pt.X)
-                        CharPosClosest++;
+                    {
+                        charPosClosest++;
+                    }
                 }
-                TextBoxCtrl.SelectionStart = CharPosClosest;
+
+                TextBoxCtrl.SelectionStart = charPosClosest;
 
                 TextBoxCtrl.SelectionLength = 0;
-                decimal CurrentValue;
 
-                int CurPos = TextBoxCtrl.SelectionStart;
-                string Txt = TextBoxCtrl.Text.Insert(CurPos, DragTxt);
-                e.Effects = ValidateInput(ref Txt, out CurrentValue) ? DragDropEffects.Move : DragDropEffects.None;
+                var curPos = TextBoxCtrl.SelectionStart;
+                var txt = TextBoxCtrl.Text.Insert(curPos, dragTxt ?? string.Empty);
+                e.Effects = ValidateInput(ref txt, out _) ? DragDropEffects.Move : DragDropEffects.None;
             }
             e.Handled = true;
         }
+
         private void TextBoxCtrl_PreviewDrop(object sender, DragEventArgs e)
         {
-            string DragTxt = (string)e.Data.GetData("Text");
-            int CurPos = TextBoxCtrl.SelectionStart;
-            string Txt = TextBoxCtrl.Text.Insert(CurPos, DragTxt);
-            decimal CurrentValue;
+            var dragTxt = (string)e.Data.GetData("Text");
+            var curPos = TextBoxCtrl.SelectionStart;
+            var txt = TextBoxCtrl.Text.Insert(curPos, dragTxt ?? string.Empty);
 
-            if (ValidateInput(ref Txt, out CurrentValue))
+            if (ValidateInput(ref txt, out var currentValue))
             {
                 e.Effects = DragDropEffects.Move;
-                Value = CurrentValue;
-                TextBoxCtrl.SelectionStart = CurPos;
-                TextBoxCtrl.SelectionLength = DragTxt.Length;
+                Value = currentValue;
+                TextBoxCtrl.SelectionStart = curPos;
+                if (dragTxt != null)
+                {
+                    TextBoxCtrl.SelectionLength = dragTxt.Length;
+                }
             }
             e.Handled = true;
         }
+
         private void TextBoxCtrl_PreviewQueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
             // Very reluctantly, preventing this control from initiating any drag drop operations.
