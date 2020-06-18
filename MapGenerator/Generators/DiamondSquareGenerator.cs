@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace MapGenerator.Generators
 {
@@ -22,7 +23,7 @@ namespace MapGenerator.Generators
             ResetRandom();
         }
         
-        public float[,] GenerateMap(int n, float minValue = 0, float maxValue = 1, float roughness = 2)
+        public float[,] GenerateMap(int n, float minValue = 0, float maxValue = 1, float roughness = 2, CancellationToken token = new CancellationToken())
         {
             if (n > MaxPowerOfTwo)
             {
@@ -37,7 +38,7 @@ namespace MapGenerator.Generators
 
             m_Roughness = roughness;
 
-            GenerateMapInternal();
+            GenerateMapInternal(token);
 
             return m_Map;
         }
@@ -47,7 +48,7 @@ namespace MapGenerator.Generators
             m_Random = new Random(m_Seed);
         }
 
-        private void GenerateMapInternal()
+        private void GenerateMapInternal(CancellationToken token)
         {
             m_Map = new float[m_Size, m_Size];
 
@@ -79,6 +80,8 @@ namespace MapGenerator.Generators
                         SquareStep(x, y, i, maxIndex, noiseModifier);
                     }
                 }
+
+                token.ThrowIfCancellationRequested();
             }
         }
 

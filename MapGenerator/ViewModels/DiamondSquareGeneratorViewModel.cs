@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MapGenerator.Generators;
 using MapGenerator.ViewModels.Interfaces;
 
@@ -64,6 +65,11 @@ namespace MapGenerator.ViewModels
         public float[,] GenerateMap()
         {
             return m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness);
+        }
+
+        public float[,] GenerateMap(CancellationToken token)
+        {
+            return m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness, token);
         }
 
         private void RecalculateExpectedImageSize()

@@ -19,8 +19,7 @@
         <Border x:Name="PowerGenerationSection" 
                         BorderThickness="2"
                         BorderBrush="Black"
-                        Margin="5"
-                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
+                        Margin="5">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Label x:Name="CurrentPowerLabel"
@@ -52,8 +51,7 @@
         <Border x:Name="RoughnessSection" 
                         BorderThickness="2"
                         BorderBrush="Black"
-                        Margin="5"
-                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
+                        Margin="5">
             <StackPanel Orientation="Vertical">
                 <Label x:Name="RoughnessDescription"
                                HorizontalAlignment="Left"

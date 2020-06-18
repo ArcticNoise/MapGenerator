@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -45,29 +46,34 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_Image, value);
         }
 
-        public IAsyncCommand GenerateMapAsyncCommand => AsyncCommandFactory.Create(GenerateMapAsync, obj => !m_IsGenerating);
+        public IAsyncCommand GenerateMapAsyncCommand { get; }
         public ICommand SaveMapCommand => new DelegateCommand(obj => SaveMap(), obj => m_Image != null && !m_IsGenerating);
         
         public MainWindowViewModel()
         {
             Generator = new DiamondSquareGeneratorViewModel();
+            GenerateMapAsyncCommand = AsyncCommandFactory.Create(GenerateMapAsync, obj => !m_IsGenerating);
         }
 
-        private async Task GenerateMapAsync()
+        private async Task GenerateMapAsync(CancellationToken token = new CancellationToken())
         {
-            await Task.Run(GenerateMap);
+            await Task.Run(() => GenerateMap(token), token);
         }
 
-        private void GenerateMap()
+        private void GenerateMap(CancellationToken token)
         {
+            ResetValues();
+            IsGenerating = true;
+
             try
             {
-                ResetValues();
-                IsGenerating = true;
-
-                m_Map = m_Generator.GenerateMap();
-                Image = ImageGenerator.GenerateGreyscale(m_Map);
+                m_Map = m_Generator.GenerateMap(token);
+                Image = ImageGenerator.GenerateGreyscale(m_Map, token);
                 MapSideSize = m_Map.GetLength(0);
+            }
+            catch(OperationCanceledException)
+            {
+                ResetValues();
             }
             finally
             {
@@ -101,6 +107,7 @@ namespace MapGenerator.ViewModels
         private void ResetValues()
         {
             MapSideSize = 0;
+            m_Map = null;
             Image = null;
         }
     }

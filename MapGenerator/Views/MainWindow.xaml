@@ -63,6 +63,14 @@
                         BorderThickness="2"
                         BorderBrush="Black"
                         Command="{Binding SaveMapCommand}"/>
+                <Button x:Name="CancelButton"
+                        Content="Cancel"
+                        Width="60"
+                        Height="30"
+                        Margin="5"
+                        BorderThickness="2"
+                        BorderBrush="Black"
+                        Command="{Binding GenerateMapAsyncCommand.CancelCommand}"/>
             </StackPanel>
         </Border>
         <Border x:Name="Image"
@@ -145,5 +153,7 @@
         <KeyBinding Command="{Binding SaveMapCommand}"
                     Key="S"
                     Modifiers="Control"/>
+        <KeyBinding Command="{Binding GenerateMapAsyncCommand.CancelCommand}"
+                    Key="Escape"/>
     </Window.InputBindings>
 </Window>
