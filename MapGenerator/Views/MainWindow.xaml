@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MapGenerator"
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
-        xmlns:controls="clr-namespace:MapGenerator.Controls"
         xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
+        xmlns:converters="clr-namespace:MapGenerator.Converters"
         mc:Ignorable="d"
-        Title="NoiseMapGenerator" 
+        Title="Map Generator" 
         Height="450" 
         Width="800"
         MinWidth="200"
@@ -19,8 +18,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MapGenerator;component/Styles/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Images/ImagesDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -32,6 +33,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
         <Border x:Name="ToolBar"
@@ -70,6 +72,7 @@
         </Border>
         <Border x:Name="Settings"
                 Grid.Row="1"
+                Grid.RowSpan="2"
                 Grid.Column="1"
                 BorderThickness="1"
                 BorderBrush="Black"
@@ -103,7 +106,8 @@
                 <Border x:Name="PowerGenerationSection" 
                         BorderThickness="2"
                         BorderBrush="Black"
-                        Margin="5">
+                        Margin="5"
+                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">
                             <Label x:Name="CurrentPowerLabel"
@@ -114,6 +118,11 @@
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Content="{Binding PowerOfTwo}"
+                                   Margin="5"/>
+                            <Label x:Name="ExpectedSize"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Content="{Binding ExpectedImageSizeString}"
                                    Margin="5"/>
                         </StackPanel>
                         
@@ -130,22 +139,54 @@
                 <Border x:Name="RoughnessSection" 
                         BorderThickness="2"
                         BorderBrush="Black"
-                        Margin="5">
-                    <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
-                                            Style="{StaticResource NumericUpDownStyle}"
-                                            Margin="5"
-                                            Value="{Binding Roughness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                            Background="LightGray"
-                                            Foreground="Black"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            Minimum="1"
-                                            Maximum="100"/>
+                        Margin="5"
+                        IsEnabled="{Binding IsGenerating, Converter={StaticResource InverseBoolConverter}}">
+                    <StackPanel Orientation="Vertical">
+                        <Label x:Name="RoughnessDescription"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Content="Noise Roughness"
+                               Margin="5"/>
+                        <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
+                                                            Style="{StaticResource NumericUpDownStyle}"
+                                                            Margin="5"
+                                                            Value="{Binding Roughness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                            Background="LightGray"
+                                                            Foreground="Black"
+                                                            HorizontalContentAlignment="Center"
+                                                            VerticalContentAlignment="Center"
+                                                            Minimum="1"
+                                                            Maximum="100"/>
+                    </StackPanel>
                 </Border>
                 
             </StackPanel>
         </Border>
-
+        <Border x:Name="ProgressBar"
+                Grid.Row="2"
+                Grid.Column="0"
+                BorderThickness="1"
+                BorderBrush="Black"
+                Background="DarkGray">
+            <ProgressBar Margin="10"
+                         IsIndeterminate="True">
+                <ProgressBar.Style>
+                    <Style BasedOn="{StaticResource {x:Type ProgressBar}}"
+                           TargetType="{x:Type ProgressBar}">
+                        <Setter Property="Visibility" 
+                                Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsGenerating}" 
+                                         Value="False">
+                                <Setter Property="Visibility"
+                                        Value="Hidden"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                        
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+        </Border>
     </Grid>
     <Window.InputBindings>
         <KeyBinding Command="{Binding GenerateMapAsyncCommand}"

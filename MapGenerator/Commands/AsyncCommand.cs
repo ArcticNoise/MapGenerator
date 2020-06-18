@@ -30,27 +30,36 @@ namespace MapGenerator.Commands
         }
     }
 
-    public class AsyncCommand<TResult> : AsyncCommandBase, INotifyPropertyChanged
+    public class AsyncCommand : AsyncCommand<object>
     {
-        private readonly Func<CancellationToken, Task<TResult>> m_Command;
-        private readonly CancelAsyncCommand m_CancelCommand;
-        private NotifyTaskCompletion<TResult> m_Execution;
+        public AsyncCommand(Func<CancellationToken, Task<object>> command, Predicate<object> canExecute) : base(command, canExecute)
+        {
+        }
+    }
 
-        public AsyncCommand(Func<CancellationToken, Task<TResult>> command)
+    public class AsyncCommand<T> : AsyncCommandBase, INotifyPropertyChanged
+    {
+        private readonly Func<CancellationToken, Task<T>> m_Command;
+        private readonly Predicate<T> m_CanExecute;
+        private readonly CancelAsyncCommand m_CancelCommand;
+        private NotifyTaskCompletion<T> m_Execution;
+
+        public AsyncCommand(Func<CancellationToken, Task<T>> command, Predicate<T> canExecute)
         {
             m_Command = command;
+            m_CanExecute = canExecute;
             m_CancelCommand = new CancelAsyncCommand();
         }
 
         public override bool CanExecute(object parameter)
         {
-            return Execution == null || Execution.IsCompleted;
+            return (Execution == null || Execution.IsCompleted) && (m_CanExecute?.Invoke((T)parameter) ?? true);
         }
 
         public override async Task ExecuteAsync(object parameter)
         {
             m_CancelCommand.NotifyCommandStarting();
-            Execution = new NotifyTaskCompletion<TResult>(m_Command(m_CancelCommand.Token));
+            Execution = new NotifyTaskCompletion<T>(m_Command(m_CancelCommand.Token));
             RaiseCanExecuteChanged();
             await Execution.TaskCompletion;
             m_CancelCommand.NotifyCommandFinished();
@@ -59,7 +68,7 @@ namespace MapGenerator.Commands
 
         public ICommand CancelCommand => m_CancelCommand;
 
-        public NotifyTaskCompletion<TResult> Execution
+        public NotifyTaskCompletion<T> Execution
         {
             get => m_Execution;
             private set
@@ -124,142 +133,26 @@ namespace MapGenerator.Commands
         }
     }
 
-    public static class AsyncCommand
+    public static class AsyncCommandFactory
     {
-        public static AsyncCommand<object> Create(Func<Task> command)
+        public static AsyncCommand<T> Create<T>(Func<Task<T>> command, Predicate<T> canExecute = null)
         {
-            return new AsyncCommand<object>(async _ => { await command(); return null; });
+            return new AsyncCommand<T>(_ => command(), canExecute);
         }
 
-        public static AsyncCommand<TResult> Create<TResult>(Func<Task<TResult>> command)
+        public static AsyncCommand<T> Create<T>(Func<CancellationToken, Task<T>> command, Predicate<T> canExecute = null)
         {
-            return new AsyncCommand<TResult>(_ => command());
+            return new AsyncCommand<T>(command, canExecute);
         }
 
-        public static AsyncCommand<object> Create(Func<CancellationToken, Task> command)
+        public static AsyncCommand Create(Func<Task> command, Predicate<object> canExecute = null)
         {
-            return new AsyncCommand<object>(async token => { await command(token); return null; });
+            return new AsyncCommand(async _ => { await command(); return null; }, canExecute);
         }
 
-        public static AsyncCommand<TResult> Create<TResult>(Func<CancellationToken, Task<TResult>> command)
+        public static AsyncCommand Create(Func<CancellationToken, Task> command, Predicate<object> canExecute = null)
         {
-            return new AsyncCommand<TResult>(command);
+            return new AsyncCommand(async token => { await command(token); return null; }, canExecute);
         }
     }
-
-    //public class AsyncCommand : IAsyncCommand
-    //{
-    //    public event EventHandler CanExecuteChanged;
-
-    //    private bool m_IsExecuting;
-    //    private readonly Func<Task> m_Execute;
-    //    private readonly Func<bool> m_CanExecute;
-    //    private readonly IErrorHandler m_ErrorHandler;
-
-    //    public AsyncCommand(Func<Task> execute, Func<bool> canExecute = null, IErrorHandler errorHandler = null)
-    //    {
-    //        m_Execute = execute;
-    //        m_CanExecute = canExecute;
-    //        m_ErrorHandler = errorHandler;
-    //    }
-
-    //    public bool CanExecute()
-    //    {
-    //        return !m_IsExecuting && (m_CanExecute?.Invoke() ?? true);
-    //    }
-
-    //    public async Task ExecuteAsync()
-    //    {
-    //        if (CanExecute())
-    //        {
-    //            try
-    //            {
-    //                RaiseCanExecuteChanged();
-
-    //                m_IsExecuting = true;
-    //                await m_Execute();
-    //            }
-    //            finally
-    //            {
-    //                m_IsExecuting = false;
-    //                RaiseCanExecuteChanged();
-    //            }
-    //        }
-
-    //    }
-
-    //    public void RaiseCanExecuteChanged()
-    //    {
-    //        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-    //    }
-
-    //    #region Explicit implementations
-    //    bool ICommand.CanExecute(object parameter)
-    //    {
-    //        return CanExecute();
-    //    }
-
-    //    void ICommand.Execute(object parameter)
-    //    {
-    //        ExecuteAsync().FireAndForgetSafeAsync(m_ErrorHandler);
-    //    }
-    //    #endregion
-    //}
-
-    //public class AsyncCommand<T> : IAsyncCommand<T>
-    //{
-    //    public event EventHandler CanExecuteChanged;
-
-    //    private bool m_IsExecuting;
-    //    private readonly Func<T, Task> m_Execute;
-    //    private readonly Func<T, bool> m_CanExecute;
-    //    private readonly IErrorHandler m_ErrorHandler;
-
-    //    public AsyncCommand(Func<T, Task> execute, Func<T, bool> canExecute = null, IErrorHandler errorHandler = null)
-    //    {
-    //        m_Execute = execute;
-    //        m_CanExecute = canExecute;
-    //        m_ErrorHandler = errorHandler;
-    //    }
-
-    //    public bool CanExecute(T parameter)
-    //    {
-    //        return !m_IsExecuting && (m_CanExecute?.Invoke(parameter) ?? true);
-    //    }
-
-    //    public async Task ExecuteAsync(T parameter)
-    //    {
-    //        if (CanExecute(parameter))
-    //        {
-    //            try
-    //            {
-    //                m_IsExecuting = true;
-    //                await m_Execute(parameter);
-    //            }
-    //            finally
-    //            {
-    //                m_IsExecuting = false;
-    //            }
-    //        }
-
-    //        RaiseCanExecuteChanged();
-    //    }
-
-    //    public void RaiseCanExecuteChanged()
-    //    {
-    //        CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-    //    }
-
-    //    #region Explicit implementations
-    //    bool ICommand.CanExecute(object parameter)
-    //    {
-    //        return CanExecute((T)parameter);
-    //    }
-
-    //    void ICommand.Execute(object parameter)
-    //    {
-    //        ExecuteAsync((T)parameter).FireAndForgetSafeAsync(m_ErrorHandler);
-    //    }
-    //    #endregion
-    //}
 }

@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace MapGenerator.Commands
 {
-    public sealed class NotifyTaskCompletion<TResult> : INotifyPropertyChanged
+    public sealed class NotifyTaskCompletion<T> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Task<TResult> Task { get; }
+        public Task<T> Task { get; }
 
         public Task TaskCompletion { get; }
 
-        public TResult Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result
+        public T Result => (Task.Status == TaskStatus.RanToCompletion) ? Task.Result
             : default;
 
         public TaskStatus Status => Task.Status;
@@ -29,7 +29,7 @@ namespace MapGenerator.Commands
 
         public string ErrorMessage => InnerException?.Message;
 
-        public NotifyTaskCompletion(Task<TResult> task)
+        public NotifyTaskCompletion(Task<T> task)
         {
             Task = task;
             TaskCompletion = WatchTaskAsync(task);

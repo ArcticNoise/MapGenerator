@@ -25,11 +25,25 @@ namespace MapGenerator.ViewModels
         private float[,] m_Map;
         private readonly DiamondSquareGenerator m_Generator;
 
-        private int m_PowerOfTwo = 8;
+        private int m_PowerOfTwo;
         public int PowerOfTwo
         {
             get => m_PowerOfTwo;
-            set => SetProperty(ref m_PowerOfTwo, value);
+            set
+            {
+                if (value != m_PowerOfTwo)
+                {
+                    m_PowerOfTwo = value;
+                    OnPropertyChanged();
+                    RecalculateExpectedImageSize();
+                }
+            }
+        }
+
+        private void RecalculateExpectedImageSize()
+        {
+            var value = (int)Math.Pow(2, m_PowerOfTwo) + 1;
+            ExpectedImageSize = value;
         }
 
         private int m_MapSideSize;
@@ -43,14 +57,7 @@ namespace MapGenerator.ViewModels
         public int Roughness
         {
             get => m_Roughness;
-            set
-            {
-                if (value != m_Roughness)
-                {
-                    m_Roughness = value;
-                    m_Generator.ResetRandom();
-                }
-            }
+            set => SetProperty(ref m_Roughness, value);
         }
 
         private bool m_IsGenerating;
@@ -60,6 +67,23 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_IsGenerating, value);
         }
 
+        private int m_ExpectedImageSize;
+        public int ExpectedImageSize
+        {
+            get => m_ExpectedImageSize;
+            set
+            {
+                if (m_ExpectedImageSize != value)
+                {
+                    m_ExpectedImageSize = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(ExpectedImageSizeString));
+                }
+            }
+        }
+
+        public string ExpectedImageSizeString => $"({ExpectedImageSize}x{ExpectedImageSize})";
+
         private BitmapImage m_Image;
         public BitmapImage Image
         {
@@ -67,13 +91,16 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_Image, value);
         }
 
-        public IAsyncCommand GenerateMapAsyncCommand => AsyncCommand.Create(GenerateMapAsync);
+        public IAsyncCommand GenerateMapAsyncCommand => AsyncCommandFactory.Create(GenerateMapAsync, obj => !m_IsGenerating);
 
         public ICommand SaveMapCommand => new DelegateCommand(obj => SaveMap(), obj => m_Image != null && !m_IsGenerating);
         
         public MainWindowViewModel()
         {
             m_Generator = new DiamondSquareGenerator(Seed);
+            
+            //Start value
+            PowerOfTwo = 8;
         }
 
         private async Task GenerateMapAsync()
