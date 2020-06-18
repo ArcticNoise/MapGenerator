@@ -19,7 +19,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
-                <ResourceDictionary Source="/MapGenerator;component/Images/ImagesDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
