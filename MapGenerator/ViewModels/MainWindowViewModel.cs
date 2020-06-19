@@ -67,13 +67,17 @@ namespace MapGenerator.ViewModels
 
         private void GenerateMap(CancellationToken token)
         {
-            ResetValues();
             IsGenerating = true;
 
             try
             {
-                m_Map = Generator.GenerateMap(token);
-                Image = ImageGenerator.GenerateGreyscale(m_Map, token);
+                //Saving values here to temporary values just to keep old values on their place 
+                //in case if we will cancel one of those generation steps
+                var newMap = Generator.GenerateMap(token);
+                var newImage = ImageGenerator.GenerateGreyscale(newMap, token);
+
+                m_Map = newMap;
+                Image = newImage;
                 Width = m_Map.GetLength(0);
                 Height = m_Map.GetLength(1);
             }

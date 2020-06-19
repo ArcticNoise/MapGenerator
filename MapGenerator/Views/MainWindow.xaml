@@ -4,9 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
-        xmlns:converters="clr-namespace:MapGenerator.Converters"
-        xmlns:selectors="clr-namespace:MapGenerator.Selectors"
-        xmlns:generators="clr-namespace:MapGenerator.Views.Generators"
         mc:Ignorable="d"
         Title="Map Generator" 
         Height="450" 
@@ -19,18 +16,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MapGenerator;component/Styles/Images.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Resources/Images.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Resources/Converters.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Resources/DataTemplateSelectors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
-
-            <selectors:DataTypeTemplateSelector x:Key="GeneratorTemplateSelector">
-                <selectors:DataTypeTemplateSelector.Templates>
-                    <DataTemplate DataType="{x:Type viewModels:DiamondSquareGeneratorViewModel}">
-                        <generators:DiamondSquareGeneratorView/>
-                    </DataTemplate>
-                </selectors:DataTypeTemplateSelector.Templates>
-            </selectors:DataTypeTemplateSelector>
         </ResourceDictionary>
     </Window.Resources>
 
