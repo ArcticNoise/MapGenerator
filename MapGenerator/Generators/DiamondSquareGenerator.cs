@@ -12,8 +12,8 @@ namespace MapGenerator.Generators
 
         private readonly int m_Seed;
 
-        private float m_MinValue;
-        private float m_MaxValue;
+        private const float MinValue = 0;
+        private const float MaxValue = 255;
 
         private const int MinValueOfTwo = 2;
         private const int MaxPowerOfTwo = 14;
@@ -24,7 +24,7 @@ namespace MapGenerator.Generators
             m_Random = new Random(m_Seed);
         }
         
-        public float[,] GenerateMap(int n, float minValue = 0, float maxValue = 1, float roughness = 2, CancellationToken token = new CancellationToken())
+        public float[,] GenerateMap(int n, float roughness = 2, CancellationToken token = new CancellationToken())
         {
             if (n > MaxPowerOfTwo)
             {
@@ -38,10 +38,6 @@ namespace MapGenerator.Generators
 
             m_Size = (int)Math.Pow(2, n) + 1;
 
-            m_MinValue = minValue;
-
-            m_MaxValue = maxValue;
-
             m_Roughness = roughness;
 
             GenerateMapInternal(token);
@@ -53,7 +49,7 @@ namespace MapGenerator.Generators
         {
             m_Map = new float[m_Size, m_Size];
 
-            var startValue = RandRange(m_MinValue, m_MaxValue);
+            var startValue = RandRange(MinValue, MaxValue);
 
             var maxIndex = m_Size - 1;
 
@@ -64,7 +60,7 @@ namespace MapGenerator.Generators
 
             for (var i = maxIndex; i > 1; i /= 2)
             {
-                var noiseModifier = (m_MaxValue - m_MinValue) * m_Roughness * ((float)i / maxIndex);
+                var noiseModifier = MaxValue * m_Roughness * ((float)i / maxIndex);
 
                 for (var y = 0; y < maxIndex; y += i)
                 {
@@ -148,7 +144,7 @@ namespace MapGenerator.Generators
 
         private float Normalize(float value)
         {
-            return Math.Clamp(value, m_MinValue, m_MaxValue);
+            return Math.Clamp(value, MinValue, MaxValue);
         }
         
         private bool IsPowerOf2(int value)

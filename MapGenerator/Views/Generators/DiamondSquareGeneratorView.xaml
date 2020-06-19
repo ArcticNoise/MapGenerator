@@ -12,7 +12,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">

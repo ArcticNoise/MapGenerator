@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
+        xmlns:interfaces="clr-namespace:MapGenerator.ViewModels.Interfaces"
         mc:Ignorable="d"
         Title="Map Generator" 
         Height="450" 
@@ -116,8 +117,29 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
+                <Border x:Name="NoiseTypeSelectionSection"
+                        BorderThickness="2"
+                        BorderBrush="Black"
+                        Margin="5">
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Noise type"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        <ComboBox ItemsSource="{Binding NoiseGenerators}"
+                                  SelectedItem="{Binding SelectedGenerator}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type interfaces:IGeneratorViewModel}">
+                                    <TextBlock Text="{Binding Name}"
+                                               Background="LightGray"
+                                               Margin="2"
+                                               TextAlignment="Left"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
 
-                <ContentControl Content="{Binding Generator}"
+                </Border>
+                <ContentControl Content="{Binding SelectedGenerator, Mode=OneWay}"
                                 ContentTemplateSelector="{StaticResource GeneratorTemplateSelector}"
                                 IsEnabled="{Binding Path=IsGenerating, Converter={StaticResource InverseBoolConverter}}"/>
                 

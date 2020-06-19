@@ -11,10 +11,7 @@ namespace MapGenerator.Generators
 
         private int m_Width;
         private int m_Height;
-
-        private float m_MinValue;
-        private float m_MaxValue;
-
+        
         private readonly SimplexNoise m_Noise;
 
         public SimplexNoiseGenerator(int seed)
@@ -22,16 +19,12 @@ namespace MapGenerator.Generators
             m_Noise = new SimplexNoise(seed);
         }
 
-        public float[,] GenerateMap(int width, int height, float minValue, float maxValue, CancellationToken token = new CancellationToken())
+        public float[,] GenerateMap(int width, int height, CancellationToken token = new CancellationToken())
         {
             m_Width = width;
 
             m_Height = height;
-
-            m_MinValue = minValue;
-
-            m_MaxValue = maxValue;
-
+            
             GenerateMapInternal(token);
 
             return m_Map;
@@ -45,18 +38,12 @@ namespace MapGenerator.Generators
             {
                 for (var y = 0; y < m_Height; y++)
                 {
-                    m_Map[x,y] =(float)NormalizeValue(m_Noise.Evaluate(x, y));
+                    m_Map[x, y] = m_Noise.CalcPixel2D(x, y);
                     token.ThrowIfCancellationRequested();
                 }
 
                 token.ThrowIfCancellationRequested();
             }
-        }
-
-        private double NormalizeValue(double value)
-        {
-            var newValue = Math.Clamp(m_MaxValue/ 2 * (value + 1), m_MinValue, m_MaxValue);
-            return newValue;
         }
     }
 }

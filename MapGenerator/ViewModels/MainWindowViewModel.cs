@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MapGenerator.Commands;
@@ -15,13 +17,15 @@ namespace MapGenerator.ViewModels
     public class MainWindowViewModel : AbstractViewModel
     {
         private float[,] m_Map;
-        private IGeneratorViewModel m_Generator;
 
-        public IGeneratorViewModel Generator
+        private IGeneratorViewModel m_SelectedGenerator;
+        public IGeneratorViewModel SelectedGenerator
         {
-            get => m_Generator;
-            set => SetProperty(ref m_Generator, value);
+            get => m_SelectedGenerator;
+            set => SetProperty(ref m_SelectedGenerator, value);
         }
+
+        public List<IGeneratorViewModel> NoiseGenerators { get; }
 
         private bool m_IsGenerating;
         public bool IsGenerating
@@ -56,7 +60,12 @@ namespace MapGenerator.ViewModels
         
         public MainWindowViewModel()
         {
-            Generator = new DiamondSquareGeneratorViewModel();
+            NoiseGenerators = new List<IGeneratorViewModel>()
+            {
+                new DiamondSquareGeneratorViewModel(),
+                new SimplexNoiseGeneratorViewModel()
+            };
+
             GenerateMapAsyncCommand = AsyncCommandFactory.Create(GenerateMapAsync, obj => !m_IsGenerating);
         }
 
@@ -73,7 +82,7 @@ namespace MapGenerator.ViewModels
             {
                 //Saving values here to temporary values just to keep old values on their place 
                 //in case if we will cancel one of those generation steps
-                var newMap = Generator.GenerateMap(token);
+                var newMap = SelectedGenerator.GenerateMap(token);
                 var newImage = ImageGenerator.GenerateGreyscale(newMap, token);
 
                 m_Map = newMap;

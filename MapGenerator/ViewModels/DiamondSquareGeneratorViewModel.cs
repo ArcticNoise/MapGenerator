@@ -9,12 +9,11 @@ namespace MapGenerator.ViewModels
     {
         private const int Seed = 666;
         private readonly DiamondSquareGenerator m_Generator;
-        
-        private const float MinHeightValue = 0;
-        private const float MaxHeightValue = 255;
 
         public int MinPowerValue => 2;
         public int MaxPowerValue => 14;
+
+        public string Name => "Diamond-Square";
 
         private int m_PowerOfTwo;
         public int PowerOfTwo
@@ -64,12 +63,12 @@ namespace MapGenerator.ViewModels
 
         public float[,] GenerateMap()
         {
-            return m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness);
+            return m_Generator.GenerateMap(PowerOfTwo, Roughness);
         }
 
         public float[,] GenerateMap(CancellationToken token)
         {
-            return m_Generator.GenerateMap(PowerOfTwo, MinHeightValue, MaxHeightValue, Roughness, token);
+            return m_Generator.GenerateMap(PowerOfTwo, Roughness, token);
         }
 
         private void RecalculateExpectedImageSize()

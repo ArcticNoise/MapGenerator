@@ -11,8 +11,10 @@ namespace MapGenerator.ViewModels
         private const float MinHeightValue = 0;
         private const float MaxHeightValue = 255;
 
-        private readonly SimplexNoiseGenerator m_Generator;
+        public string Name => "Simplex noise";
 
+        private readonly SimplexNoiseGenerator m_Generator;
+        
         private int m_Width;
         public int Width
         {
@@ -26,7 +28,13 @@ namespace MapGenerator.ViewModels
             get => m_Height;
             set => SetProperty(ref m_Height, value);
         }
-        
+
+        private int m_Scale;
+        public int Scale
+        {
+            get => m_Scale;
+            set => SetProperty(ref m_Scale, value);
+        }
 
         public SimplexNoiseGeneratorViewModel()
         {
@@ -37,12 +45,12 @@ namespace MapGenerator.ViewModels
 
         public float[,] GenerateMap()
         {
-            return m_Generator.GenerateMap(Width, Height, MinHeightValue, MaxHeightValue);
+            return m_Generator.GenerateMap(Width, Height);
         }
 
         public float[,] GenerateMap(CancellationToken token)
         {
-            return m_Generator.GenerateMap(Width, Height, MinHeightValue, MaxHeightValue, token);
+            return m_Generator.GenerateMap(Width, Height);
         }
     }
 }
