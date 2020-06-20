@@ -12,7 +12,7 @@ namespace MapGenerator.Generators
 
         private readonly int m_Seed;
 
-        private const float MinValue = -1;
+        private const float MinValue = 0;
         private const float MaxValue = 1;
 
         private const int MinValueOfTwo = 2;

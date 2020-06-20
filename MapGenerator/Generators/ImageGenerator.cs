@@ -19,7 +19,7 @@ namespace MapGenerator.Generators
                 for (var y = 0; y < height; y++)
                 {
                     var value = map[x, y];
-                    var pixelColorValue = Math.Clamp((int)(value * 128 + 128), 0, 255);
+                    var pixelColorValue = Math.Clamp((int)(value * 255), 0, 255);
                     var pixelColor = Color.FromArgb(pixelColorValue, pixelColorValue, pixelColorValue);
                     directBitmap.SetPixel(x, y, pixelColor);
 
