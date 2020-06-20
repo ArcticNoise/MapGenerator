@@ -4,67 +4,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
-             xmlns:converters="clr-namespace:MapGenerator.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Styles/ControlStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
         <Border x:Name="PowerGenerationSection" 
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5">
+                        Style="{StaticResource SettingsElementBorderStyle}">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Label x:Name="CurrentPowerLabel"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="Current generation value: "/>
+                           Style="{StaticResource LabelStyle}"
+                           Content="Current generation value: "/>
                     <Label x:Name="CurrentPowerValue"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="{Binding PowerOfTwo}"
-                                   Margin="5"/>
+                           Style="{StaticResource LabelStyle}"
+                           Content="{Binding PowerOfTwo}"
+                           Margin="5"/>
                     <Label x:Name="ExpectedSize"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="{Binding ExpectedImageSizeString}"
-                                   Margin="5"/>
+                           Style="{StaticResource LabelStyle}"
+                           Content="{Binding ExpectedImageSizeString}"
+                           Margin="5"/>
                 </StackPanel>
 
                 <Slider Orientation="Horizontal"
-                                TickFrequency="1"
-                                Minimum="{Binding MinPowerValue}"
-                                Maximum="{Binding MaxPowerValue}"
-                                Value="{Binding PowerOfTwo}"
-                                TickPlacement="BottomRight"
-                                IsSelectionRangeEnabled="True"
-                                Margin="5"/>
+                        TickFrequency="1"
+                        Minimum="{Binding MinPowerValue}"
+                        Maximum="{Binding MaxPowerValue}"
+                        Value="{Binding PowerOfTwo}"
+                        TickPlacement="BottomRight"
+                        IsSelectionRangeEnabled="True"
+                        Margin="5"/>
             </StackPanel>
         </Border>
         <Border x:Name="RoughnessSection" 
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5">
+                Style="{StaticResource SettingsElementBorderStyle}">
             <StackPanel Orientation="Vertical">
                 <Label x:Name="RoughnessDescription"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
+                               Style="{StaticResource LabelStyle}"
                                Content="Noise Roughness"
                                Margin="5"/>
                 <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
                                                     Style="{StaticResource NumericUpDownStyle}"
                                                     Margin="5"
                                                     Value="{Binding Roughness, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                    Background="LightGray"
-                                                    Foreground="Black"
-                                                    HorizontalContentAlignment="Center"
-                                                    VerticalContentAlignment="Center"
                                                     Minimum="1"
                                                     Maximum="100"/>
             </StackPanel>

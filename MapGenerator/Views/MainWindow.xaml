@@ -11,25 +11,18 @@
         Width="800"
         MinWidth="400"
         MinHeight="400"
-        Background="DimGray"
         Focusable="True"
         viewModels:ViewModelLocator.AutoWireViewModel="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MapGenerator;component/Views/Resources/Images.xaml"/>
                 <ResourceDictionary Source="/MapGenerator;component/Views/Resources/Converters.xaml"/>
                 <ResourceDictionary Source="/MapGenerator;component/Views/Resources/DataTemplateSelectors.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Styles/ControlStyles.xaml"/>
+                <ResourceDictionary Source="/MapGenerator;component/Views/Styles/Colors.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-
-    <Window.Style>
-        <Style TargetType="{x:Type Window}">
-            <Setter Property="Icon" 
-                    Value="{StaticResource AppIcon}"/>
-        </Style>
-    </Window.Style>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -47,8 +40,8 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                BorderThickness="1"
-                BorderBrush="Black">
+                Style="{StaticResource EditorMainBorderStyle}"
+                Background="{StaticResource EditorBackgroundColorBrush}">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="GenerateButton"
                         Content="Generate"
@@ -79,9 +72,8 @@
         <Border x:Name="Image"
                 Grid.Row="1"
                 Grid.Column="0"
-                BorderThickness="1"
-                BorderBrush="Black"
-                Background="LightSlateGray">
+                Style="{StaticResource EditorMainBorderStyle}"
+                Background="{StaticResource ImageAreaBackgroundColorBrush}">
             <Image Source="{Binding Image}"
                    Margin="5"/>
         </Border>
@@ -89,68 +81,56 @@
                 Grid.Row="1"
                 Grid.RowSpan="2"
                 Grid.Column="1"
-                BorderThickness="1"
-                BorderBrush="Black"
-                Background="DarkGray">
-            
-            <StackPanel Orientation="Vertical">
-                <Border x:Name="ImageParamsSection" 
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Map Width:  "
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                            <Label Content="{Binding Width}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                Style="{StaticResource EditorMainBorderStyle}"
+                Background="{StaticResource EditorBackgroundColorBrush}">
+            <ScrollViewer>
+                <StackPanel Orientation="Vertical">
+                    <Border x:Name="ImageParamsSection" 
+                            Style="{StaticResource SettingsElementBorderStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Map Width:  "
+                                       Style="{StaticResource LabelStyle}"/>
+                                <Label Content="{Binding Width}"
+                                       Style="{StaticResource LabelStyle}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Map Height: "
+                                       Style="{StaticResource LabelStyle}"/>
+                                <Label Content="{Binding Height}"
+                                       Style="{StaticResource LabelStyle}"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Map Height: "
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                            <Label Content="{Binding Height}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
+                    </Border>
+                    <Border x:Name="NoiseTypeSelectionSection"
+                            Style="{StaticResource SettingsElementBorderStyle}">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Noise type"
+                                   Style="{StaticResource LabelStyle}"/>
+                            <ComboBox ItemsSource="{Binding NoiseGenerators}"
+                                      SelectedItem="{Binding SelectedGenerator}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type interfaces:IGeneratorViewModel}">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Style="{StaticResource TextBlockStyle}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                         </StackPanel>
-                    </StackPanel>
-                </Border>
-                <Border x:Name="NoiseTypeSelectionSection"
-                        BorderThickness="2"
-                        BorderBrush="Black"
-                        Margin="5">
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Noise type"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-                        <ComboBox ItemsSource="{Binding NoiseGenerators}"
-                                  SelectedItem="{Binding SelectedGenerator}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type interfaces:IGeneratorViewModel}">
-                                    <TextBlock Text="{Binding Name}"
-                                               Background="LightGray"
-                                               Margin="2"
-                                               TextAlignment="Left"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
 
-                </Border>
-                <ContentControl Content="{Binding SelectedGenerator, Mode=OneWay}"
-                                ContentTemplateSelector="{StaticResource GeneratorTemplateSelector}"
-                                IsEnabled="{Binding Path=IsGenerating, Converter={StaticResource InverseBoolConverter}}"/>
+                    </Border>
+                    <ContentControl Content="{Binding SelectedGenerator, Mode=OneWay}"
+                                    ContentTemplateSelector="{StaticResource GeneratorTemplateSelector}"
+                                    IsEnabled="{Binding Path=IsGenerating, Converter={StaticResource InverseBoolConverter}}"/>
                 
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
         <Border x:Name="ProgressBar"
                 Grid.Row="2"
                 Grid.Column="0"
-                BorderThickness="1"
-                BorderBrush="Black"
-                Background="DarkGray">
+                Style="{StaticResource EditorMainBorderStyle}"
+                Background="{StaticResource EditorBackgroundColorBrush}">
             <ProgressBar Margin="10"
                          IsIndeterminate="True">
                 <ProgressBar.Style>

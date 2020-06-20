@@ -10,13 +10,17 @@
         <Setter Property = "Height" Value="36"/>
         <Setter Property = "Minimum" Value="-30"/>
         <Setter Property = "NegativeTextBrush" Value="Red"/>
-        <Setter Property = "Foreground" Value="Blue"/>
+        <Setter Property = "Foreground" Value="Black"/>
+        <Setter Property = "Background" Value="LightGray"/>
         <Setter Property = "VerticalAlignment" Value="Center"/>
+        <Setter Property = "HorizontalContentAlignment" Value="Left"/>
+        <Setter Property = "VerticalContentAlignment" Value="Center"/>
         <Setter Property = "BorderThickness" Value="0"/>
         <Setter Property = "OutOfRangeTextBrush" Value="Gray"/>
-    </Style>
+    </Style> 
 
     <helpers:ThicknessToMarginConverter x:Key="ThicknessToMarginConverter" />
+
     <Style TargetType="{x:Type numericUpDownControl:ArrowRepeatButton}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="IsTabStop" Value="False"/>
