@@ -1,6 +1,4 @@
-﻿
-using System;
-using System.Threading;
+﻿using System.Threading;
 using MapGenerator.Noise;
 
 namespace MapGenerator.Generators
@@ -38,7 +36,7 @@ namespace MapGenerator.Generators
             {
                 for (var y = 0; y < m_Height; y++)
                 {
-                    m_Map[x, y] = m_Noise.CalcPixel2D(x, y);
+                    m_Map[x, y] = m_Noise.Calc2D(x, y);
                     token.ThrowIfCancellationRequested();
                 }
 

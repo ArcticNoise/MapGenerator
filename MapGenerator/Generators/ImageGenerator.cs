@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Media.Imaging;
 using MapGenerator.Bitmaps;
@@ -10,14 +11,15 @@ namespace MapGenerator.Generators
     {
         public static BitmapImage GenerateGreyscale(float[,] map, CancellationToken token)
         {
-            var size = map.GetLength(0);
-            var directBitmap = new DirectBitmap(size, size);
-            for (var x = 0; x < size; x++)
+            var width = map.GetLength(0);
+            var height = map.GetLength(1);
+            var directBitmap = new DirectBitmap(width, height);
+            for (var x = 0; x < width; x++)
             {
-                for (var y = 0; y < size; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    var height = map[x, y];
-                    var pixelColorValue = (int)height;
+                    var value = map[x, y];
+                    var pixelColorValue = Math.Clamp((int)(value * 128 + 128), 0, 255);
                     var pixelColor = Color.FromArgb(pixelColorValue, pixelColorValue, pixelColorValue);
                     directBitmap.SetPixel(x, y, pixelColor);
 

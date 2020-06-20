@@ -12,8 +12,8 @@ namespace MapGenerator.Generators
 
         private readonly int m_Seed;
 
-        private const float MinValue = 0;
-        private const float MaxValue = 255;
+        private const float MinValue = -1;
+        private const float MaxValue = 1;
 
         private const int MinValueOfTwo = 2;
         private const int MaxPowerOfTwo = 14;
@@ -60,7 +60,7 @@ namespace MapGenerator.Generators
 
             for (var i = maxIndex; i > 1; i /= 2)
             {
-                var noiseModifier = MaxValue * m_Roughness * ((float)i / maxIndex);
+                var noiseModifier = (MaxValue - MinValue) * m_Roughness * ((float)i / maxIndex);
 
                 for (var y = 0; y < maxIndex; y += i)
                 {

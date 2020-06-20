@@ -39,8 +39,8 @@ namespace MapGenerator.ViewModels
         public SimplexNoiseGeneratorViewModel()
         {
             m_Generator = new SimplexNoiseGenerator(Seed);
-            Width = 256;
-            Height = 256;
+            Width = 512;
+            Height = 512;
         }
 
         public float[,] GenerateMap()
