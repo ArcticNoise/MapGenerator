@@ -46,6 +46,8 @@
                 Background="{StaticResource EditorBackgroundColorBrush}">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="GenerateButton"
+                        ToolTip="Generate Map (F5)"
+                        ToolTipService.ShowOnDisabled="True"
                         Content="Generate"
                         Width="60"
                         Height="30"
@@ -54,6 +56,8 @@
                         BorderBrush="Black"
                         Command="{Binding GenerateMapAsyncCommand}"/>
                 <Button x:Name="SaveButton"
+                        ToolTip="Save Generated Map (Ctrl + S)"
+                        ToolTipService.ShowOnDisabled="True"
                         Content="Save"
                         Width="60"
                         Height="30"
@@ -62,6 +66,8 @@
                         BorderBrush="Black"
                         Command="{Binding SaveMapCommand}"/>
                 <Button x:Name="CancelButton"
+                        ToolTip="Stops map generation (Esc)"
+                        ToolTipService.ShowOnDisabled="True"
                         Content="Cancel"
                         Width="60"
                         Height="30"
