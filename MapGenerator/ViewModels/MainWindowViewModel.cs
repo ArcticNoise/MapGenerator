@@ -100,7 +100,7 @@ namespace MapGenerator.ViewModels
             }
             catch(OperationCanceledException)
             {
-                ResetValues();
+                //Do nothing
             }
             finally
             {

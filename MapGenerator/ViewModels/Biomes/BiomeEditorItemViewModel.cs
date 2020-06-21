@@ -11,7 +11,6 @@ namespace MapGenerator.ViewModels.Biomes
             set => SetProperty(ref m_ColorBrush, value);
         }
 
-
         private string m_ColorValue;
         public string ColorValue
         {
