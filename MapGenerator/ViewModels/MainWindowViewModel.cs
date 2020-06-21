@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using MapGenerator.Commands;
 using MapGenerator.Extensions;
 using MapGenerator.Generators;
-using MapGenerator.ViewModels.Interfaces;
+using MapGenerator.ViewModels.Biomes;
+using MapGenerator.ViewModels.Generators;
+using MapGenerator.ViewModels.Generators.Interfaces;
 using Microsoft.Win32;
 
 namespace MapGenerator.ViewModels
@@ -56,6 +57,8 @@ namespace MapGenerator.ViewModels
             set => SetProperty(ref m_Image, value);
         }
 
+        public BiomeEditorViewModel BiomeEditor { get; }
+
         public IAsyncCommand GenerateMapAsyncCommand { get; }
         public ICommand SaveMapCommand => new DelegateCommand(obj => SaveMap(), obj => m_Image != null && !m_IsGenerating);
         
@@ -68,6 +71,8 @@ namespace MapGenerator.ViewModels
             };
 
             SelectedGenerator = NoiseGenerators.First();
+
+            BiomeEditor = new BiomeEditorViewModel();
 
             GenerateMapAsyncCommand = AsyncCommandFactory.Create(GenerateMapAsync, obj => !m_IsGenerating);
         }

@@ -15,8 +15,30 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical">
+        <Border x:Name="SeedSection" 
+                Style="{StaticResource SettingsElementBorderStyle}">
+            <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Content="Seed: "
+                           Style="{StaticResource LabelStyle}"/>
+                    <numericUpDownControl:NumericUpDown x:Name="SeedUpDown"
+                                                        Grid.Column="1"
+                                                        Style="{StaticResource NumericUpDownStyle}"
+                                                        Margin="5"
+                                                        Value="{Binding Seed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Minimum="1"
+                                                        Maximum="99999999"/>
+                </Grid>
+            </StackPanel>
+        </Border>
         <Border x:Name="PowerGenerationSection" 
-                        Style="{StaticResource SettingsElementBorderStyle}">
+                Style="{StaticResource SettingsElementBorderStyle}">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <Label x:Name="CurrentPowerLabel"

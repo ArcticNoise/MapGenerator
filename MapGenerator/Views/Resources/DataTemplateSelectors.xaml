@@ -2,8 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:selectors="clr-namespace:MapGenerator.Selectors"
                     xmlns:generators="clr-namespace:MapGenerator.Views.Generators"
-                    xmlns:viewModels="clr-namespace:MapGenerator.ViewModels">
-    
+                    xmlns:viewModels="clr-namespace:MapGenerator.ViewModels.Generators"
+                    xmlns:biomesViewModels="clr-namespace:MapGenerator.ViewModels.Biomes"
+                    xmlns:numericUpDownControl="clr-namespace:MapGenerator.Controls.NumericUpDownControl"
+                    xmlns:biomesViews="clr-namespace:MapGenerator.Views.Biomes">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/MapGenerator;component/Controls/NumericUpDownControl/Styles/ControlStyles.xaml"/>
+        <ResourceDictionary Source="/MapGenerator;component/Views/Styles/ControlStyles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <selectors:DataTypeTemplateSelector x:Key="GeneratorTemplateSelector">
         <selectors:DataTypeTemplateSelector.Templates>
             <DataTemplate DataType="{x:Type viewModels:DiamondSquareGeneratorViewModel}">
@@ -13,5 +20,52 @@
                 <generators:SimplexNoiseGeneratorView/>
             </DataTemplate>
         </selectors:DataTypeTemplateSelector.Templates>
+    </selectors:DataTypeTemplateSelector>
+
+    <selectors:DataTypeTemplateSelector x:Key="BiomeItemTemplateSelector">
+        <selectors:DataTypeTemplateSelector.Templates>
+            <DataTemplate DataType="{x:Type biomesViewModels:BiomeEditorItemViewModel}">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Rectangle Fill="{Binding ColorBrush, Mode=OneWay}"
+                               Width="40"
+                               Height="40"/>-->
+                    <Label Content="Color: "
+                           Style="{StaticResource LabelStyle}"/>
+                    <TextBox Text="{Binding ColorValue}"
+                             Width="60"
+                             Height="30"/>
+                    <Label Content="Height"
+                           Style="{StaticResource LabelStyle}"/>
+                    <numericUpDownControl:NumericUpDown x:Name="RoughnessUpDown"
+                                                        Style="{StaticResource NumericUpDownStyle}"
+                                                        Margin="5"
+                                                        Value="{Binding Height, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Width="60"
+                                                        Height="30"
+                                                        Minimum="0"
+                                                        Maximum="100"/>
+                    <Button Content="UP"
+                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type biomesViews:BiomeEditorView}}, Path=DataContext.MoveBiomeUpCommand}"
+                            CommandParameter="{Binding}"
+                            Height="30"
+                            Width="60"
+                            Margin="5"/>
+                    <Button Content="DOWN"
+                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type biomesViews:BiomeEditorView}}, Path=DataContext.MoveBiomeDownCommand}"
+                            CommandParameter="{Binding}"
+                            Height="30"
+                            Width="60"
+                            Margin="5"/>
+                </StackPanel>
+            </DataTemplate>
+        </selectors:DataTypeTemplateSelector.Templates>
+        <selectors:DataTypeTemplateSelector.NewItemPlaceholderTemplate>
+            <DataTemplate>
+                <Button Content="+"
+                        Height="40"
+                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type biomesViews:BiomeEditorView}}, Path=DataContext.CreateBiomeCommand}">
+                </Button>
+            </DataTemplate>
+        </selectors:DataTypeTemplateSelector.NewItemPlaceholderTemplate>
     </selectors:DataTypeTemplateSelector>
 </ResourceDictionary>

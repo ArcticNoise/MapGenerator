@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 
-namespace MapGenerator.ViewModels.Interfaces
+namespace MapGenerator.ViewModels.Generators.Interfaces
 {
     public interface IGeneratorViewModel
     {
         string Name { get; }
 
-        float[,] GenerateMap();
         float[,] GenerateMap(CancellationToken token);
     }
 }

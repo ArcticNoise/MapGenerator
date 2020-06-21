@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:MapGenerator.ViewModels"
-        xmlns:interfaces="clr-namespace:MapGenerator.ViewModels.Interfaces"
+        xmlns:interfaces="clr-namespace:MapGenerator.ViewModels.Generators.Interfaces"
+        xmlns:biomeViewModels="clr-namespace:MapGenerator.ViewModels.Biomes"
+        xmlns:biomeViews="clr-namespace:MapGenerator.Views.Biomes"
         mc:Ignorable="d"
         Title="Map Generator" 
         Height="450" 
@@ -105,7 +107,7 @@
                     <Border x:Name="NoiseTypeSelectionSection"
                             Style="{StaticResource SettingsElementBorderStyle}">
                         <StackPanel Orientation="Vertical">
-                            <Label Content="Noise type"
+                            <Label Content="Noise algorithm"
                                    Style="{StaticResource LabelStyle}"/>
                             <ComboBox ItemsSource="{Binding NoiseGenerators}"
                                       SelectedItem="{Binding SelectedGenerator}">
@@ -119,10 +121,19 @@
                         </StackPanel>
 
                     </Border>
-                    <ContentControl Content="{Binding SelectedGenerator, Mode=OneWay}"
+                    <ContentControl x:Name="NoiseGeneratorContent"
+                                    Content="{Binding SelectedGenerator, Mode=OneWay}"
                                     ContentTemplateSelector="{StaticResource GeneratorTemplateSelector}"
                                     IsEnabled="{Binding Path=IsGenerating, Converter={StaticResource InverseBoolConverter}}"/>
-                
+                    
+                    <ContentControl x:Name="BiomeEditor"
+                                    Content="{Binding BiomeEditor, Mode=OneWay}">
+                        <ContentControl.Resources>
+                            <DataTemplate DataType="{x:Type biomeViewModels:BiomeEditorViewModel}">
+                                <biomeViews:BiomeEditorView/>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
                 </StackPanel>
             </ScrollViewer>
         </Border>

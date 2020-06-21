@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using MapGenerator.Generators.GenerationData;
 using MapGenerator.Noise;
 
 namespace MapGenerator.Generators
@@ -7,57 +8,35 @@ namespace MapGenerator.Generators
     public class SimplexNoiseGenerator
     {
         private float[,] m_Map;
-
-        private int m_Width;
-        private int m_Height;
-
-        private float m_Frequency;
-
-        private float m_Octaves;
-
-        private float m_Redistribution;
         
-        private readonly SimplexNoise m_Noise;
+        private SimplexNoise m_Noise;
 
-        public SimplexNoiseGenerator(int seed)
+        public float[,] GenerateMap(SimplexNoiseGenerationData generationData, CancellationToken token)
         {
-            m_Noise = new SimplexNoise(seed);
-        }
-
-        public float[,] GenerateMap(int width, int height, float frequency = 1, int octaves = 1, float redistribution = 1, CancellationToken token = new CancellationToken())
-        {
-            m_Width = width;
-
-            m_Height = height;
-
-            m_Frequency = frequency;
-
-            m_Octaves = octaves;
-
-            m_Redistribution = redistribution;
-            
-            GenerateMapInternal(token);
+            GenerateMapInternal(generationData, token);
 
             return m_Map;
         }
 
-        private void GenerateMapInternal(CancellationToken token)
+        private void GenerateMapInternal(SimplexNoiseGenerationData generationData, CancellationToken token)
         {
-            m_Map = new float[m_Width, m_Height];
+            m_Noise = new SimplexNoise(generationData.Seed);
 
-            for (var x = 0; x < m_Width; x++)
+            m_Map = new float[generationData.Width, generationData.Height];
+
+            for (var x = 0; x < generationData.Width; x++)
             {
-                for (var y = 0; y < m_Height; y++)
+                for (var y = 0; y < generationData.Height; y++)
                 {
                     var elevation = 0d;
                     var noiseMod = 1d;
 
-                    var nx = (double)x / m_Width - 0.5d;
-                    var ny = (double)y / m_Width - 0.5d;
+                    var nx = (double)x / generationData.Width - 0.5d;
+                    var ny = (double)y / generationData.Height - 0.5d;
 
-                    for (var i = 0; i < m_Octaves; i++)
+                    for (var i = 0; i < generationData.Octaves; i++)
                     {
-                        elevation += noiseMod * m_Noise.Evaluate(nx * (1 / noiseMod) * m_Frequency, ny * (1 / noiseMod) * m_Frequency);
+                        elevation += noiseMod * m_Noise.Evaluate(nx * (1 / noiseMod) * generationData.Frequency, ny * (1 / noiseMod) * generationData.Frequency);
                         noiseMod /= 2;
                     }
 
@@ -65,7 +44,7 @@ namespace MapGenerator.Generators
 
                     var normalizedElevation = (clampedElevation + 1) / 2;
 
-                    var redistributedElevation = (float)Math.Pow(normalizedElevation, m_Redistribution);
+                    var redistributedElevation = (float)Math.Pow(normalizedElevation, generationData.Redistribution);
 
                     m_Map[x, y] = redistributedElevation;
                     token.ThrowIfCancellationRequested();

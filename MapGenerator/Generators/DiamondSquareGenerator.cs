@@ -1,57 +1,48 @@
 ﻿using System;
 using System.Threading;
+using MapGenerator.Generators.GenerationData;
 
 namespace MapGenerator.Generators
 {
     public class DiamondSquareGenerator
     {
-        private int m_Size;
         private float[,] m_Map;
-        private readonly Random m_Random;
-        private float m_Roughness;
-
-        private readonly int m_Seed;
+        private Random m_Random;
 
         private const float MinValue = 0;
         private const float MaxValue = 1;
 
         private const int MinValueOfTwo = 2;
         private const int MaxPowerOfTwo = 14;
-
-        public DiamondSquareGenerator(int randomSeed)
-        {
-            m_Seed = randomSeed;
-            m_Random = new Random(m_Seed);
-        }
         
-        public float[,] GenerateMap(int n, float roughness = 2, CancellationToken token = new CancellationToken())
+        public float[,] GenerateMap(DiamondSquareGenerationData generationData, CancellationToken token)
         {
-            if (n > MaxPowerOfTwo)
+            if (generationData.PowerOfTwo > MaxPowerOfTwo)
             {
                 throw new ArgumentException($"n should not be more then {MaxPowerOfTwo} or it can cause an overflow.");
             }
 
-            if (n < MinValueOfTwo)
+            if (generationData.PowerOfTwo < MinValueOfTwo)
             {
                 throw new ArgumentException($"n should not be less then {MinValueOfTwo}.");
             }
-
-            m_Size = (int)Math.Pow(2, n) + 1;
-
-            m_Roughness = roughness;
-
-            GenerateMapInternal(token);
+            
+            GenerateMapInternal(generationData, token);
 
             return m_Map;
         }
         
-        private void GenerateMapInternal(CancellationToken token)
+        private void GenerateMapInternal(DiamondSquareGenerationData generationData, CancellationToken token)
         {
-            m_Map = new float[m_Size, m_Size];
+            m_Random = new Random(generationData.Seed);
+
+            var size = (int)Math.Pow(2, generationData.PowerOfTwo) + 1;
+
+            m_Map = new float[size, size];
 
             var startValue = RandRange(MinValue, MaxValue);
 
-            var maxIndex = m_Size - 1;
+            var maxIndex = size - 1;
 
             m_Map[0, 0] = startValue;
             m_Map[0, maxIndex] = startValue;
@@ -60,7 +51,7 @@ namespace MapGenerator.Generators
 
             for (var i = maxIndex; i > 1; i /= 2)
             {
-                var noiseModifier = (MaxValue - MinValue) * m_Roughness * ((float)i / maxIndex);
+                var noiseModifier = (MaxValue - MinValue) * generationData.Roughness * ((float)i / maxIndex);
 
                 for (var y = 0; y < maxIndex; y += i)
                 {
@@ -74,7 +65,7 @@ namespace MapGenerator.Generators
                 {
                     for (var x = 0; x < maxIndex; x += i)
                     {
-                        SquareStep(x, y, i, maxIndex, noiseModifier);
+                        SquareStep(x, y, i, noiseModifier, maxIndex);
                     }
                 }
 
@@ -97,7 +88,7 @@ namespace MapGenerator.Generators
             m_Map[middleX, middleY] = newMiddleValue;
         }
         
-        private void SquareStep(int x, int y, int size, int maxIndex, float noiseModifier)
+        private void SquareStep(int x, int y, int size, float noiseModifier, int maxIndex)
         {
             var leftTopValue = m_Map[x, y];
             var leftBottomValue = m_Map[x + size, y];

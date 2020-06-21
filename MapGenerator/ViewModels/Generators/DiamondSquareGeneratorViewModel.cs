@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Threading;
 using MapGenerator.Generators;
-using MapGenerator.ViewModels.Interfaces;
+using MapGenerator.Generators.GenerationData;
+using MapGenerator.ViewModels.Generators.Interfaces;
 
-namespace MapGenerator.ViewModels
+namespace MapGenerator.ViewModels.Generators
 {
     public class DiamondSquareGeneratorViewModel : AbstractViewModel, IGeneratorViewModel
     {
-        private const int Seed = 666;
         private readonly DiamondSquareGenerator m_Generator;
 
         public int MinPowerValue => 2;
         public int MaxPowerValue => 14;
 
         public string Name => "Diamond-Square";
+
+        private int m_Seed;
+        public int Seed
+        {
+            get => m_Seed;
+            set => SetProperty(ref m_Seed, value);
+        }
 
         private int m_PowerOfTwo;
         public int PowerOfTwo
@@ -56,25 +63,33 @@ namespace MapGenerator.ViewModels
 
         public DiamondSquareGeneratorViewModel()
         {
-            m_Generator = new DiamondSquareGenerator(Seed);
-            //Start value
-            PowerOfTwo = 8;
+            m_Generator = new DiamondSquareGenerator();
+            InitWithDefaultValues();
         }
 
-        public float[,] GenerateMap()
+        public float[,] GenerateMap(CancellationToken token = new CancellationToken())
         {
-            return m_Generator.GenerateMap(PowerOfTwo, Roughness);
-        }
+            var generationData = new DiamondSquareGenerationData()
+            {
+                Seed = Seed, 
+                PowerOfTwo= PowerOfTwo, 
+                Roughness= Roughness
+            };
 
-        public float[,] GenerateMap(CancellationToken token)
-        {
-            return m_Generator.GenerateMap(PowerOfTwo, Roughness, token);
+            return m_Generator.GenerateMap(generationData, token);
         }
 
         private void RecalculateExpectedImageSize()
         {
             var value = (int)Math.Pow(2, m_PowerOfTwo) + 1;
             ExpectedImageSize = value;
+        }
+
+        private void InitWithDefaultValues()
+        {
+            PowerOfTwo = 8;
+            Seed = 666;
+            Roughness = 1;
         }
     }
 }

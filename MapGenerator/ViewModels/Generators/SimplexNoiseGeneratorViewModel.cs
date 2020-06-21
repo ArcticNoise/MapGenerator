@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using MapGenerator.Generators;
-using MapGenerator.ViewModels.Interfaces;
+using MapGenerator.Generators.GenerationData;
+using MapGenerator.ViewModels.Generators.Interfaces;
 
-namespace MapGenerator.ViewModels
+namespace MapGenerator.ViewModels.Generators
 {
     public class SimplexNoiseGeneratorViewModel : AbstractViewModel, IGeneratorViewModel
     {
@@ -17,7 +18,7 @@ namespace MapGenerator.ViewModels
 
         public string Name => "Simplex noise";
 
-        private SimplexNoiseGenerator m_Generator;
+        private readonly SimplexNoiseGenerator m_Generator;
         
         private int m_Width;
         public int Width
@@ -63,26 +64,34 @@ namespace MapGenerator.ViewModels
 
         public SimplexNoiseGeneratorViewModel()
         {
+            m_Generator = new SimplexNoiseGenerator();
+
+            InitDefaultValues();
+        }
+        
+        public float[,] GenerateMap(CancellationToken token = new CancellationToken())
+        {
+            var generationData = new SimplexNoiseGenerationData()
+            {
+                Seed = Seed,
+                Width = Width,
+                Height = Height,
+                Frequency = Frequency,
+                Octaves = Octaves,
+                Redistribution = Redistribution
+            };
+
+            return m_Generator.GenerateMap(generationData, token);
+        }
+
+        private void InitDefaultValues()
+        {
             Seed = 666;
             Width = 512;
             Height = 512;
             Frequency = 1;
             Octaves = 1;
             Redistribution = 1;
-        }
-
-        public float[,] GenerateMap()
-        {
-            m_Generator = new SimplexNoiseGenerator(Seed);
-
-            return m_Generator.GenerateMap(Width, Height, Frequency, Octaves, Redistribution);
-        }
-
-        public float[,] GenerateMap(CancellationToken token)
-        {
-            m_Generator = new SimplexNoiseGenerator(Seed);
-
-            return m_Generator.GenerateMap(Width, Height, Frequency, Octaves, Redistribution, token);
         }
     }
 }
