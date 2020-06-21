@@ -1,17 +1,15 @@
 # Map Generator
 Simple Map generation tool made with C#, .Net Core and WPF (MVVM).
 
-v0.1
+v0.2
 
-Uses only Diamond-Square noise generation algorithm.
+Uses Diamond-Square and Simplex noise generation algorithm.
 
 Generates only heightmap for now. 
 
 Uses async implementation of the ICommand to generate data with a possibility to cancel in any time. 
 
 Generated image can be saved to the png.
-
-https://en.wikipedia.org/wiki/Diamond-square_algorithm
 
 TODO plans for now: 
 1. Bioms
